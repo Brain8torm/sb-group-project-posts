@@ -1,0 +1,31 @@
+.item {
+  box-shadow: 0 3px 12px -1px rgba(7, 10, 25, 0.05),
+    0 22px 27px -20px rgba(7, 10, 25, 0.05) !important;
+    border-radius: 15px !important;
+}
+.wrapper{
+  position: relative;
+  padding: 15px 0;
+}
+
+.media {
+    border-top-right-radius: 15px;
+    border-top-left-radius: 15px;
+}
+.avatar {
+    margin-right: 13px;
+}
+
+.body {
+    padding: 0 16px !important;
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.like {
+    cursor: pointer;
+}
