@@ -29,3 +29,13 @@
 .like {
     cursor: pointer;
 }
+
+.date {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.date_icon {
+    margin-right: 10px;
+}
