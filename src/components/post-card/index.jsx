@@ -1,7 +1,4 @@
-import { Avatar, Card, CardContent, CardHeader, CardMedia, IconButton, SvgIcon, Typography } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import LocalFireDepartmentSharpIcon from '@mui/icons-material/LocalFireDepartmentSharp';
-import 'dayjs/locale/ru';
+import { Avatar, Card, CardContent, CardHeader, CardMedia, SvgIcon} from '@mui/material';
 import classNames from 'classnames';
 import styles from './post-card.module.css';
 import dayjs from 'dayjs';
@@ -9,7 +6,7 @@ import 'dayjs/locale/ru';
 
 
 
-export function PostCard() {
+export function PostCard({_id, title, text, author, created_at}) {
     function FireIcon(props) {
         return (
             <SvgIcon {...props}>
@@ -35,14 +32,10 @@ export function PostCard() {
                     alt=""
                     className={classNames(styles.media)}
                 />
-                <CardHeader title='Title'></CardHeader>
+                <CardHeader title={ title }></CardHeader>
                 <CardContent className={classNames(styles.body)}>
-                    <div className={classNames(styles.date)}><CalendarIcon fontSize="small" className={classNames(styles.date_icon)} /> { dayjs().locale('ru').format('D MMMM YYYY') }</div>
-                    <p>
-                        This impressive paella is a perfect party dish and a fun meal to cook
-                        together with your guests. Add 1 cup of frozen peas along with the mussels,
-                        if you like.
-                    </p>
+                    <div className={classNames(styles.date)}><CalendarIcon fontSize="small" className={classNames(styles.date_icon)} /> { dayjs(created_at).locale('ru').format('D MMMM YYYY') }</div>
+                    <p>{text}</p>
 
                 </CardContent>
                 <div className={styles.footer}>
@@ -50,7 +43,7 @@ export function PostCard() {
                         <Avatar aria-label="post" className={classNames(styles.avatar)} sx={{ width: 35, height: 35 }}>
                             R
                         </Avatar>
-                        <div className={classNames(styles.author)}>123</div>
+                        <div className={classNames(styles.author)}>{author.name}</div>
                     </div>
                     <div className={classNames(styles.like)} style={{ display: 'flex', alignItems: 'center' }}><FireIcon /> 123</div>
                 </div>
