@@ -45,7 +45,7 @@ export function PostCard({_id, title, text, author, created_at}) {
                         </Avatar>
                         <div className={classNames(styles.author)}>{author.name}</div>
                     </div>
-                    <div className={classNames(styles.like)} style={{ display: 'flex', alignItems: 'center' }}><FireIcon /> 123</div>
+                    <div className={classNames(styles.like)} style={{ display: 'flex', alignItems: 'center' }}><FireIcon /> {Math.ceil(Math.random()*100)}</div>
                 </div>
             </div>
         </Card>

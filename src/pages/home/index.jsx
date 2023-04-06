@@ -11,14 +11,14 @@ export function HomePage({ posts }) {
         setIsMasonry(event.target.checked ? true : false);
     }
 
-console.log('isMasonry', isMasonry);
+
 
     return (
         <>
             <Container maxWidth="lg">
-                <Stack direction="row" spacing={1} alignItems="center">
+            <Stack direction="row" spacing={1} alignItems="center">
                     <Typography>Grid</Typography>
-                    <Switch defaultChecked checked={isMasonry} value='masonry' onChange={handleSwitchChange} name="masonry" />
+                    <Switch checked={isMasonry} value='masonry' onChange={handleSwitchChange} name="masonry" />
                     <Typography>Masonry</Typography>
                 </Stack>
                 <PostsList type={isMasonry ? 'masonry' : 'grid'} posts={posts} />
