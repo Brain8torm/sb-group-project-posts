@@ -13,15 +13,25 @@ export function App() {
 
   function handlePostLike(post) {
     const like = isLiked(post.likes, currentUser._id);
-    console.log('has like', like);
+
     api.changeLikePostStatus(post._id, like)
       .then((updatePost) => {
         const newPosts = posts.map(postState => {
           return postState._id === updatePost._id ? updatePost : postState
-        })
+        });
 
-        setPosts(newPosts)
+        setPosts(newPosts);
       })
+  }
+
+  function handlePostDelete(post) {
+    api.deletePostById(post._id).then((deletedPost) => {
+      const newPosts = posts.filter(postState => {
+        return postState._id !== deletedPost._id;
+      });
+
+      setPosts(newPosts);
+    });
   }
 
   useEffect(() => {
@@ -37,10 +47,10 @@ export function App() {
 
   return (
     <>
-      <Header currentUser={currentUser}/>
+      <Header currentUser={currentUser} />
 
       <main className={classNames(styles.section_large)}>
-        <HomePage posts={posts}  onPostLike={handlePostLike} currentUser={currentUser} />
+        <HomePage posts={posts} onPostLike={handlePostLike} currentUser={currentUser} onPostDelete={handlePostDelete} />
       </main>
 
       <Footer />

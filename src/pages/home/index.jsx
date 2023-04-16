@@ -3,7 +3,7 @@ import { PostsList } from '../../components/posts-list';
 import { useState } from 'react';
 
 
-export function HomePage({ posts, onPostLike, currentUser }) {
+export function HomePage({ posts, onPostLike, currentUser, onPostDelete }) {
 
     const [isMasonry, setIsMasonry] = useState(true);
 
@@ -21,7 +21,7 @@ export function HomePage({ posts, onPostLike, currentUser }) {
                     <Switch checked={isMasonry} value='masonry' onChange={handleSwitchChange} name="masonry" />
                     <Typography>Masonry</Typography>
                 </Stack>
-                <PostsList type={isMasonry ? 'masonry' : 'grid'} posts={posts}  onPostLike={onPostLike} currentUser={currentUser} />
+                <PostsList type={isMasonry ? 'masonry' : 'grid'} posts={posts}  onPostLike={onPostLike} currentUser={currentUser} onPostDelete={onPostDelete} />
             </Container>
         </>
     );
