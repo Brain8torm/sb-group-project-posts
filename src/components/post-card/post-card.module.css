@@ -30,6 +30,14 @@
     cursor: pointer;
 }
 
+.like__active {
+    color: #ff0000;
+}
+
+.like__active svg path {
+    fill: #ff0000;
+}
+
 .date {
     display: flex;
     align-items: center;
@@ -38,4 +46,19 @@
 
 .date_icon {
     margin-right: 10px;
+}
+
+.remove_icon{
+    position: absolute;
+    right: 10px;
+    top: 25px;
+    visibility: none;
+    opacity: 0;
+    transtition: opacity 1s ease-in;
+    cursor: pointer;
+}
+
+.item:hover .remove_icon {
+    opacity: 1;
+    visibility: visible;
 }

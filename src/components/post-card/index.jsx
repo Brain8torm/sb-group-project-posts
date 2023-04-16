@@ -1,12 +1,15 @@
-import { Avatar, Card, CardContent, CardHeader, CardMedia, SvgIcon} from '@mui/material';
+import { Avatar, Card, CardContent, CardHeader, CardMedia, SvgIcon } from '@mui/material';
 import classNames from 'classnames';
 import styles from './post-card.module.css';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
+import { isLiked } from '../../utils/posts';
 
 
+export function PostCard({ _id, title, text, author, image, created_at, likes, currentUser, onPostLike, onPostDelete }) {
 
-export function PostCard({_id, title, text, author, created_at}) {
+    const like = isLiked(likes, currentUser?._id);
+
     function FireIcon(props) {
         return (
             <SvgIcon {...props}>
@@ -18,23 +21,42 @@ export function PostCard({_id, title, text, author, created_at}) {
     function CalendarIcon(props) {
         return (
             <SvgIcon {...props}>
-                <path d="M9 1V3H15V1H17V3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H7V1H9ZM20 11H4V19H20V11ZM8 13V15H6V13H8ZM13 13V15H11V13H13ZM18 13V15H16V13H18ZM7 5H4V9H20V5H17V7H15V5H9V7H7V5Z"/>
+                <path d="M9 1V3H15V1H17V3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H7V1H9ZM20 11H4V19H20V11ZM8 13V15H6V13H8ZM13 13V15H11V13H13ZM18 13V15H16V13H18ZM7 5H4V9H20V5H17V7H15V5H9V7H7V5Z" />
             </SvgIcon>
         );
     }
 
+    function CloseIcon(props) {
+        return (
+            <SvgIcon {...props}>
+                <path d="M12.0007 10.5865L16.9504 5.63672L18.3646 7.05093L13.4149 12.0007L18.3646 16.9504L16.9504 18.3646L12.0007 13.4149L7.05093 18.3646L5.63672 16.9504L10.5865 12.0007L5.63672 7.05093L7.05093 5.63672L12.0007 10.5865Z"></path>
+            </SvgIcon>
+        );
+    }
+
+    function handleClickLike() {
+        onPostLike({ likes, _id });
+    }
+
+    function handleClickRemove() {
+        if (author._id === currentUser._id) {
+            onPostDelete({ _id });
+        }
+    }
+
     return (
-        <Card sx={{ maxWidth: 345 }} className={classNames(styles.item)}>
+        <Card sx={{ maxWidth: 345 }} className={classNames(styles.item)} data-id={_id}>
             <div className={classNames(styles.wrapper)}>
+                <CloseIcon className={classNames(styles.remove_icon)} onClick={handleClickRemove} />
                 <CardMedia
                     component="img"
-                    image="https://picsum.photos/480/320/"
+                    image={image ? image : 'https://picsum.photos/480/320/'}
                     alt=""
                     className={classNames(styles.media)}
                 />
-                <CardHeader title={ title }></CardHeader>
+                <CardHeader title={title}></CardHeader>
                 <CardContent className={classNames(styles.body)}>
-                    <div className={classNames(styles.date)}><CalendarIcon fontSize="small" className={classNames(styles.date_icon)} /> { dayjs(created_at).locale('ru').format('D MMMM YYYY') }</div>
+                    <div className={classNames(styles.date)}><CalendarIcon fontSize="small" className={classNames(styles.date_icon)} /> {dayjs(created_at).locale('ru').format('D MMMM YYYY')}</div>
                     <p>{text}</p>
 
                 </CardContent>
@@ -45,7 +67,7 @@ export function PostCard({_id, title, text, author, created_at}) {
                         </Avatar>
                         <div className={classNames(styles.author)}>{author.name}</div>
                     </div>
-                    <div className={classNames(styles.like)} style={{ display: 'flex', alignItems: 'center' }}><FireIcon /> {Math.ceil(Math.random()*100)}</div>
+                    <div data-like={like} className={classNames(styles.like, { [styles.like__active]: like })} style={{ display: 'flex', alignItems: 'center' }} onClick={handleClickLike}><FireIcon /> {likes?.length}</div>
                 </div>
             </div>
         </Card>
