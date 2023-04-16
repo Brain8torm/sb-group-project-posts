@@ -123,7 +123,6 @@ export function Header({currentUser}) {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                {console.log('cu2', currentUser)}
                 <Box sx={{ padding: '6px 16px' }}>{currentUser?.name}</Box>
                 <Box sx={{padding: '6px 16px'}}>{currentUser?.about}</Box>
                 {settings.map((setting) => (

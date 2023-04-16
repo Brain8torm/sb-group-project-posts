@@ -3,10 +3,13 @@ import classNames from 'classnames';
 import styles from './post-card.module.css';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
+import { isLiked } from '../../utils/posts';
 
 
-
-export function PostCard({_id, title, text, author, created_at}) {
+export function PostCard({ _id, title, text, author, created_at, likes, currentUser, onPostLike }) {
+    
+    const like = isLiked(likes, currentUser?._id);
+ 
     function FireIcon(props) {
         return (
             <SvgIcon {...props}>
@@ -23,8 +26,17 @@ export function PostCard({_id, title, text, author, created_at}) {
         );
     }
 
+    function handleClickLike() {
+        if (_id === '643a5dfdaa39712183d6084f') {
+            console.log('id', _id, 'user', currentUser);
+            console.log('likes', likes);
+            console.log('like', like);
+        }
+        onPostLike({ likes, _id })
+      }
+
     return (
-        <Card sx={{ maxWidth: 345 }} className={classNames(styles.item)}>
+        <Card sx={{ maxWidth: 345 }} className={classNames(styles.item)} data-id={_id}>
             <div className={classNames(styles.wrapper)}>
                 <CardMedia
                     component="img"
@@ -45,7 +57,7 @@ export function PostCard({_id, title, text, author, created_at}) {
                         </Avatar>
                         <div className={classNames(styles.author)}>{author.name}</div>
                     </div>
-                    <div className={classNames(styles.like)} style={{ display: 'flex', alignItems: 'center' }}><FireIcon /> {Math.ceil(Math.random()*100)}</div>
+                    <div data-like={like} className={classNames(styles.like, {[styles.like__active]: like })} style={{ display: 'flex', alignItems: 'center' }} onClick={handleClickLike}><FireIcon /> {likes?.length}</div>
                 </div>
             </div>
         </Card>
