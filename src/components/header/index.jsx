@@ -14,9 +14,9 @@ import { useState, useEffect } from 'react';
 import styles from "./header.module.css";
 
 
-export function Header({currentUser}) {
+export function Header() {
 
-  const settings = ['Профиль', 'Выход'];
+  const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -37,7 +37,6 @@ export function Header({currentUser}) {
     setAnchorElUser(null);
   };
 
- 
 
   return (
     <>
@@ -100,11 +99,7 @@ export function Header({currentUser}) {
             <Box sx={{ flexGrow: 0, marginLeft: 'auto' }}>
               <Tooltip title="Открыть меню">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  {currentUser?.avatar
-                    ? <Avatar alt={currentUser?.name} src={currentUser?.avatar} />
-                    : <Avatar>{currentUser?.name}</Avatar>
-                  }
-                  
+                  <Avatar alt="BrainStorm" src="/static/images/avatar/2.jpg" />
                 </IconButton>
               </Tooltip>
               <Menu
@@ -123,8 +118,7 @@ export function Header({currentUser}) {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                <Box sx={{ padding: '6px 16px' }}>{currentUser?.name}</Box>
-                <Box sx={{padding: '6px 16px'}}>{currentUser?.about}</Box>
+                <Box sx={{padding: '6px 16px'}}>BrainStorm BrainStorm</Box>
                 {settings.map((setting) => (
                   <MenuItem key={setting} onClick={handleCloseUserMenu}>
                     <Typography textAlign="center">{setting}</Typography>
