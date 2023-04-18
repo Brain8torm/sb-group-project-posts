@@ -25,7 +25,7 @@ export function PostsList({ posts, type, onPostLike, currentUser }) {
                         <>
                             {
                                 _DATA.currentData().map((item, index) => (
-                                    <PostCard key={index} cardImg='image' {...item} onPostLike={onPostLike} currentUser={currentUser} />
+                                    <PostCard key={index} cardImg='image' {...item} />
                                 ))
                             }
                         </>
@@ -38,7 +38,7 @@ export function PostsList({ posts, type, onPostLike, currentUser }) {
                         {
                             _DATA.currentData().map((item, index) => (
                                 <Grid item xs={2} md={3} key={index}>
-                                    <PostCard {...item} />
+                                    <PostCard {...item} onPostLike={onPostLike} currentUser={currentUser} />
                                 </Grid>
                             ))
 
