@@ -6,12 +6,9 @@ import dayjs from 'dayjs';
 
 
 export function Footer() {
-  /*const [modalOpen, setModalOpen] = useState(false);*/
   const handleModalOpen = () => {
     console.log('Есть контакт');
   }
-
-
 
   return (
     <>
@@ -30,7 +27,6 @@ export function Footer() {
         onClick={handleModalOpen}
       >
       </SpeedDial>
-
     </>
   );
 }

@@ -43,8 +43,6 @@ export function App() {
       .catch(err => console.log(err))
   }, []);
 
-
-
   return (
     <>
       <Header currentUser={currentUser} />
