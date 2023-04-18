@@ -5,7 +5,7 @@ import { useState } from 'react';
 import usePagination from '../../hooks/usePagination';
 
 
-export function PostsList({ posts, type }) {
+export function PostsList({ posts, type, onPostLike, currentUser, onPostDelete }) {
     const PER_PAGE = 12;
     const [page, setPage] = useState(1);
     const count = Math.ceil((posts.length) / PER_PAGE);
@@ -21,11 +21,11 @@ export function PostsList({ posts, type }) {
             {type === 'masonry'
                 ?
                 (
-                    <Masonry columns={{ xs: 2, sm: 2, md: 3, lg: 4 }} spacing={2}>
+                    <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
                         <>
                             {
                                 _DATA.currentData().map((item, index) => (
-                                    <PostCard key={index} cardImg='image' {...item} />
+                                    <PostCard key={index} cardImg='image' {...item} onPostLike={onPostLike} currentUser={currentUser} onPostDelete={onPostDelete} />
                                 ))
                             }
                         </>
@@ -37,8 +37,8 @@ export function PostsList({ posts, type }) {
                     <Grid container spacing={2}>
                         {
                             _DATA.currentData().map((item, index) => (
-                                <Grid item xs={2} md={3} key={index}>
-                                    <PostCard {...item} />
+                                <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                                    <PostCard {...item} onPostLike={onPostLike} currentUser={currentUser} onPostDelete={onPostDelete} />
                                 </Grid>
                             ))
 
@@ -47,7 +47,7 @@ export function PostsList({ posts, type }) {
                 )
             }
 
-            <Stack spacing={2} sx={{marginTop: 2}}>
+            <Stack spacing={2} sx={{ marginTop: 2 }}>
                 <Typography>Страница {page}</Typography>
                 <Pagination count={count} page={page} onChange={handlePageChange} />
             </Stack>
