@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import dayjs from 'dayjs';
 import { ScrollTop } from '../scroll-top';
 
-
 export function Footer() {
   const handleModalOpen = () => {
     console.log('Есть контакт');
