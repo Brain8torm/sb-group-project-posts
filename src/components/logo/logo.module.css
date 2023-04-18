@@ -1,0 +1,19 @@
+.wrapper {
+}
+
+.link, .text {
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: inherit;
+  margin-right: 16px;
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: 0.3rem;
+  text-decoration: none;
+}

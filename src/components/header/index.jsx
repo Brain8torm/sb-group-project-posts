@@ -7,11 +7,11 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import styles from "./header.module.css";
+import { B8Logo } from '../logo';
 
 
 export function Header() {
@@ -43,23 +43,7 @@ export function Header() {
       <AppBar position="static">
         <Container maxWidth="lg">
           <Toolbar>
-            <Typography
-              noWrap
-              component="a"
-              href="/"
-              sx={{
-                mr: 2,
-                display: { xs: 'none', md: 'flex' },
-                fontFamily: 'monospace',
-                fontWeight: 700,
-                fontSize: '1.5rem',
-                letterSpacing: '.3rem',
-                color: 'inherit',
-                textDecoration: 'none',
-              }}
-            >
-              LOGO
-            </Typography>
+            <B8Logo altText='LOGO' link='/' />
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
               <IconButton
                 size="large"
@@ -90,9 +74,9 @@ export function Header() {
                 }}
               >
 
-                  <MenuItem onClick={handleCloseNavMenu}>
+                <MenuItem onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">{'menu'}</Typography>
-                  </MenuItem>
+                </MenuItem>
 
               </Menu>
             </Box>
@@ -118,7 +102,7 @@ export function Header() {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                <Box sx={{padding: '6px 16px'}}>BrainStorm BrainStorm</Box>
+                <Box sx={{ padding: '6px 16px' }}>BrainStorm BrainStorm</Box>
                 {settings.map((setting) => (
                   <MenuItem key={setting} onClick={handleCloseUserMenu}>
                     <Typography textAlign="center">{setting}</Typography>
