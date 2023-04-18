@@ -5,7 +5,7 @@ import { useState } from 'react';
 import usePagination from '../../hooks/usePagination';
 
 
-export function PostsList({ posts, type }) {
+export function PostsList({ posts, type, onPostLike, currentUser }) {
     const PER_PAGE = 12;
     const [page, setPage] = useState(1);
     const count = Math.ceil((posts.length) / PER_PAGE);
@@ -25,7 +25,7 @@ export function PostsList({ posts, type }) {
                         <>
                             {
                                 _DATA.currentData().map((item, index) => (
-                                    <PostCard key={index} cardImg='image' {...item} />
+                                    <PostCard key={index} cardImg='image' {...item} onPostLike={onPostLike} currentUser={currentUser} />
                                 ))
                             }
                         </>

@@ -5,10 +5,24 @@ import api from '../../utils/api';
 import { Header } from '../header';
 import { Footer } from '../footer';
 import { HomePage } from '../../pages/home';
+import { isLiked } from '../../utils/posts';
 
 export function App() {
   const [posts, setPosts] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+
+  function handlePostLike(post) {
+    const like = isLiked(post.likes, currentUser._id);
+
+    api.changeLikePostStatus(post._id, like)
+      .then((updatePost) => {
+        const newPosts = posts.map(postState => {
+          return postState._id === updatePost._id ? updatePost : postState
+        })
+
+        setPosts(newPosts)
+      })
+  }
 
   useEffect(() => {
     api.getAllInfo()
@@ -24,7 +38,7 @@ export function App() {
       <Header currentUser={currentUser} />
 
       <main className={classNames(styles.section_large)}>
-        <HomePage posts={posts} />
+        <HomePage posts={posts} onPostLike={handlePostLike} currentUser={currentUser} />
       </main>
 
       <Footer />
