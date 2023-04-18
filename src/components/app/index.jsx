@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
-import classNames from 'classnames';
-import styles from "./app.module.css";
-import api from '../../utils/api';
 import { Header } from '../header';
 import { Footer } from '../footer';
+import styles from "./app.module.css";
+import classNames from 'classnames';
 import { HomePage } from '../../pages/home';
-import { isLiked } from '../../utils/posts';
 
+import { useState } from 'react';
+import { postData } from '../../posts';
+ 
 export function App() {
+
   const [posts, setPosts] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
 
@@ -43,12 +44,15 @@ export function App() {
       .catch(err => console.log(err))
   }, []);
 
+  const [posts, setPosts] = useState(postData);
+
+
   return (
     <>
-      <Header currentUser={currentUser} />
+      <Header />
 
       <main className={classNames(styles.section_large)}>
-        <HomePage posts={posts} onPostLike={handlePostLike} currentUser={currentUser} onPostDelete={handlePostDelete} />
+        <HomePage posts={postData} />
       </main>
 
       <Footer />

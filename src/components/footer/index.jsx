@@ -3,6 +3,7 @@ import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import styles from "./footer.module.css";
 import classNames from 'classnames';
 import dayjs from 'dayjs';
+import { ScrollTop } from '../scroll-top';
 
 
 export function Footer() {
@@ -27,6 +28,7 @@ export function Footer() {
         onClick={handleModalOpen}
       >
       </SpeedDial>
+      <ScrollTop/>
     </>
   );
 }

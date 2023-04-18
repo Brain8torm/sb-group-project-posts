@@ -7,16 +7,16 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import styles from "./header.module.css";
+import { B8Logo } from '../logo';
 
 
-export function Header({currentUser}) {
+export function Header() {
 
-  const settings = ['Профиль', 'Выход'];
+  const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -37,30 +37,13 @@ export function Header({currentUser}) {
     setAnchorElUser(null);
   };
 
- 
 
   return (
     <>
       <AppBar position="static">
         <Container maxWidth="lg">
           <Toolbar>
-            <Typography
-              noWrap
-              component="a"
-              href="/"
-              sx={{
-                mr: 2,
-                display: { xs: 'none', md: 'flex' },
-                fontFamily: 'monospace',
-                fontWeight: 700,
-                fontSize: '1.5rem',
-                letterSpacing: '.3rem',
-                color: 'inherit',
-                textDecoration: 'none',
-              }}
-            >
-              LOGO
-            </Typography>
+            <B8Logo altText='LOGO' link='/' />
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
               <IconButton
                 size="large"
@@ -91,20 +74,16 @@ export function Header({currentUser}) {
                 }}
               >
 
-                  <MenuItem onClick={handleCloseNavMenu}>
+                <MenuItem onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">{'menu'}</Typography>
-                  </MenuItem>
+                </MenuItem>
 
               </Menu>
             </Box>
             <Box sx={{ flexGrow: 0, marginLeft: 'auto' }}>
               <Tooltip title="Открыть меню">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  {currentUser?.avatar
-                    ? <Avatar alt={currentUser?.name} src={currentUser?.avatar} />
-                    : <Avatar>{currentUser?.name}</Avatar>
-                  }
-                  
+                  <Avatar alt="BrainStorm" src="/static/images/avatar/2.jpg" />
                 </IconButton>
               </Tooltip>
               <Menu
@@ -123,8 +102,7 @@ export function Header({currentUser}) {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                <Box sx={{ padding: '6px 16px' }}>{currentUser?.name}</Box>
-                <Box sx={{padding: '6px 16px'}}>{currentUser?.about}</Box>
+                <Box sx={{ padding: '6px 16px' }}>BrainStorm BrainStorm</Box>
                 {settings.map((setting) => (
                   <MenuItem key={setting} onClick={handleCloseUserMenu}>
                     <Typography textAlign="center">{setting}</Typography>
