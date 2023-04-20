@@ -12,6 +12,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
 import styles from "./header.module.css";
 import { B8Logo } from '../logo';
+import { Link } from 'react-router-dom';
 
 
 export function Header({ currentUser }) {
@@ -107,11 +108,19 @@ export function Header({ currentUser }) {
               >
                 <Box sx={{ padding: '6px 16px' }}>{currentUser?.name}</Box>
                 <Box sx={{ padding: '6px 16px' }}>{currentUser?.about}</Box>
-                {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                    <Typography textAlign="center">{setting}</Typography>
-                  </MenuItem>
-                ))}
+                {
+                  settings.map(setting => (
+                    (setting === 'Профиль')
+                      ?
+                      <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                        <Link to='/profile' key={setting} onClick={handleCloseUserMenu}>{setting}</Link>
+                      </MenuItem>
+                      :
+                      <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                        <Typography textAlign="center">{setting}</Typography>
+                      </MenuItem>
+                  ))
+                }
               </Menu>
             </Box>
           </Toolbar>
