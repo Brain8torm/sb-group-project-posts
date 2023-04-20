@@ -54,7 +54,7 @@ export function App() {
       <main className={classNames(styles.section_large)}>
         <Routes>
           <Route path='/' element={<HomePage posts={posts} onPostLike={handlePostLike} currentUser={currentUser} onPostDelete={handlePostDelete} />} />
-          <Route path='/post/:postID' element={<SinglePostPage currentUser={currentUser} />} />
+          <Route path='/post/:postID' element={<SinglePostPage />} />
           <Route path='/profile' element={<ProfilePage currentUser={currentUser} posts={posts} />} />
           <Route path='*' element={<NotFoundPage />} />
         </Routes>

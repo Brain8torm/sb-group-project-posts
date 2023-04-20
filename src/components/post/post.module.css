@@ -1,0 +1,87 @@
+.poster {
+  max-width: 100%;
+}
+
+.description {
+  margin-top: 16px;
+}
+
+.info_wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-top: 16px;
+  gap: 16px;
+}
+
+.meta {
+}
+
+.meta_wraper {
+}
+
+.rating {
+  margin-top: 16px;
+}
+
+.rating_data {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.rating_title {
+  margin-bottom: 16px;
+}
+.rating_data :last-child {
+  /*margin-left: 16px;*/
+}
+
+.rating_kp, .rating_imdb {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.roles {
+  margin-top: 16px;
+}
+
+.roles_title {
+  margin-bottom: 16px;
+}
+
+.comments__wrapper {
+  margin-top: 32px;
+}
+
+.comment_item {
+  margin-bottom: 16px;
+}
+
+.inner {
+  position: relative;
+}
+
+.like_block {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.like_status {
+  margin-right: 16px;
+}
+
+.like__active {
+  color: #ff0000;
+}
+
+.like__active svg path {
+  fill: #ff0000;
+}
+
+.like {
+  cursor: pointer;
+}

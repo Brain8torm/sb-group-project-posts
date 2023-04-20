@@ -1,0 +1,39 @@
+.poster {
+  max-width: 100%;
+}
+
+.description {
+  margin-top: 16px;
+}
+
+.comments__add_block {
+  margin-top: 16px;
+}
+
+.inner {
+  position: relative;
+}
+
+.like_block {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.like_status {
+  margin-right: 16px;
+}
+
+.like__active {
+  color: #ff0000;
+}
+
+.like__active svg path {
+  fill: #ff0000;
+}
+
+.like {
+  cursor: pointer;
+}
