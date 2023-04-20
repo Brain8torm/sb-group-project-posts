@@ -9,6 +9,7 @@ import { isLiked } from '../../utils/posts';
 import { SinglePostPage } from '../../pages/post';
 import { Route, Routes } from 'react-router-dom';
 import { NotFoundPage } from '../../pages/not-found';
+import { ProfilePage } from '../../pages/profile';
 
 export function App() {
   const [posts, setPosts] = useState([]);
@@ -51,12 +52,13 @@ export function App() {
       <Header currentUser={currentUser} />
 
       <main className={classNames(styles.section_large)}>
-      <Routes>
-              <Route path='/' element={<HomePage posts={posts} onPostLike={handlePostLike} currentUser={currentUser} onPostDelete={handlePostDelete} />} />
-              <Route path='/post/:postID' element={<SinglePostPage currentUser={currentUser} />} />
-              <Route path='*' element={<NotFoundPage />} />
-            </Routes>
-        
+        <Routes>
+          <Route path='/' element={<HomePage posts={posts} onPostLike={handlePostLike} currentUser={currentUser} onPostDelete={handlePostDelete} />} />
+          <Route path='/post/:postID' element={<SinglePostPage currentUser={currentUser} />} />
+          <Route path='/profile' element={<ProfilePage currentUser={currentUser} posts={posts} />} />
+          <Route path='*' element={<NotFoundPage />} />
+        </Routes>
+
       </main>
 
       <Footer />
