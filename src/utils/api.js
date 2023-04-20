@@ -55,13 +55,19 @@ class Api {
   }
 
   getPostById(postID) {
-    return fetch(this.#getApiUrl(`/post/${postID}`), {
+    return fetch(this.#getApiUrl(`/posts/${postID}`), {
+      headers: this.#headers,
+    }).then(this.#onResponse);
+  }
+  
+  getPostComments(postID) {
+    return fetch(this.#getApiUrl(`/posts/comments/${postID}`), {
       headers: this.#headers,
     }).then(this.#onResponse);
   }
 
-  getInfoProduct(postID) {
-    return Promise.all([this.getPostById(postID), this.getUserInfo()]);
+  getInfoPost(postID) {
+    return Promise.all([this.getPostById(postID), this.getUserInfo(), this.getPostComments(postID)]);
   }
 
   deletePostById(postID) {
