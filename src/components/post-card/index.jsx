@@ -4,6 +4,7 @@ import styles from './post-card.module.css';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import { isLiked } from '../../utils/posts';
+import { Link } from 'react-router-dom';
 
 
 export function PostCard({ _id, title, text, author, image, created_at, likes, currentUser, onPostLike, onPostDelete }) {
@@ -54,7 +55,7 @@ export function PostCard({ _id, title, text, author, image, created_at, likes, c
                     alt=""
                     className={classNames(styles.media)}
                 />
-                <CardHeader title={title}></CardHeader>
+                <Link to={`/post/${_id}`} className="post__link"><CardHeader title={title}></CardHeader></Link>
                 <CardContent className={classNames(styles.body)}>
                     <div className={classNames(styles.date)}><CalendarIcon fontSize="small" className={classNames(styles.date_icon)} /> {dayjs(created_at).locale('ru').format('D MMMM YYYY')}</div>
                     <p>{text}</p>
