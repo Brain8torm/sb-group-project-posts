@@ -5,12 +5,14 @@ import { useParams } from 'react-router';
 import { Container } from '@mui/system';
 import { PostAlt } from '../../components/post-alt';
 
+
 export function SinglePostPage() {
     const { postID } = useParams();
     const [post, setPost] = useState(null);
     const [currentUser, setCurrentUser] = useState(null);
     const [errorState, setErrorState] = useState(null);
     const [postComments, setPostComments] = useState(null);
+
 
     useEffect(() => {
         api.getInfoPost(postID)
@@ -24,9 +26,6 @@ export function SinglePostPage() {
             })
     }, []);
 
-    console.log('comments', postComments);
-
-    console.log('errorState', errorState);
     return (
         <>
             {!errorState &&
