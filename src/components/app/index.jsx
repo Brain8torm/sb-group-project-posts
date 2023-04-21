@@ -10,6 +10,8 @@ import { SinglePostPage } from '../../pages/post';
 import { Route, Routes } from 'react-router-dom';
 import { NotFoundPage } from '../../pages/not-found';
 import { ProfilePage } from '../../pages/profile';
+import { UserContext } from '../../contexts/current-user-context';
+import { PostsContext } from '../../contexts/post-context';
 
 export function App() {
   const [posts, setPosts] = useState([]);
@@ -48,19 +50,23 @@ export function App() {
   }, []);
 
   return (
-    <>
-      <Header currentUser={currentUser} />
+    <PostsContext.Provider value={{ posts, onPostLike: handlePostLike, onPostDelete: handlePostDelete }}>
+      <UserContext.Provider value={{ currentUser }}>
+        <Header currentUser={currentUser} />
 
-      <main className={classNames(styles.section_large)}>
-        <Routes>
-          <Route path='/' element={<HomePage posts={posts} onPostLike={handlePostLike} currentUser={currentUser} onPostDelete={handlePostDelete} />} />
-          <Route path='/post/:postID' element={<SinglePostPage />} />
-          <Route path='/profile' element={<ProfilePage currentUser={currentUser} posts={posts} />} />
-          <Route path='*' element={<NotFoundPage />} />
-        </Routes>
-      </main>
+        <main className={classNames(styles.section_large)}>
+          <Routes>
+            <Route path='/' element={<HomePage />} />
+            <Route path='/post/:postID' element={<SinglePostPage />} />
+            <Route path='/profile' element={<ProfilePage />} />
+            <Route path='*' element={<NotFoundPage />} />
+          </Routes>
+        </main>
 
-      <Footer />
-    </>
+        <Footer />
+      </UserContext.Provider >
+    </PostsContext.Provider>
+
+
   );
 }

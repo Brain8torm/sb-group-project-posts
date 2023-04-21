@@ -1,7 +1,13 @@
 import { Avatar, Grid, Typography } from '@mui/material';
 import { Container } from '@mui/system';
+import { useContext } from 'react';
+import { UserContext } from '../../contexts/current-user-context';
+import { PostsContext } from '../../contexts/post-context';
 
-export function ProfilePage({ currentUser, posts }) {
+export function ProfilePage() {
+    const { posts } = useContext(PostsContext);
+    const { currentUser } = useContext(UserContext);
+
     return (
         <Container maxWidth="lg">
             <Grid container spacing={2}>

@@ -5,9 +5,16 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import { isLiked } from '../../utils/posts';
 import { Link } from 'react-router-dom';
+import { PostsContext } from '../../contexts/post-context';
+import { UserContext } from '../../contexts/current-user-context';
+import { useContext } from 'react';
 
 
-export function PostCard({ _id, title, text, author, image, created_at, likes, currentUser, onPostLike, onPostDelete }) {
+export function PostCard({ _id, title, text, author, image, created_at, likes }) {
+
+    const { onPostLike, onPostDelete } = useContext(PostsContext);
+    const { currentUser } = useContext(UserContext);
+
     const like = isLiked(likes, currentUser?._id);
 
     function FireIcon(props) {
