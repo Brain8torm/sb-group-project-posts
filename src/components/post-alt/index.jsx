@@ -3,7 +3,7 @@ import s from './post-alt.module.css';
 import cn from 'classnames';
 import { isLiked } from '../../utils/posts';
 
-export function PostAlt({ _id, title, text, image, likes, postComments, currentUser }) {
+export function PostAlt({ _id, title, text, image, likes, postComments, currentUser, onPostLike }) {
 
     function stringToColor(string) {
         let hash = 0;
@@ -35,7 +35,7 @@ export function PostAlt({ _id, title, text, image, likes, postComments, currentU
     const like = isLiked(likes, currentUser?._id);
 
     function handleClickLike() {
-
+        onPostLike({ likes, _id });
     }
 
     function FireIcon(props) {
