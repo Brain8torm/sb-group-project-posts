@@ -12,10 +12,13 @@ import { NotFoundPage } from '../../pages/not-found';
 import { ProfilePage } from '../../pages/profile';
 import { UserContext } from '../../contexts/current-user-context';
 import { PostsContext } from '../../contexts/post-context';
+import { NotifyContext } from '../../contexts/notify-context';
+import B8Notify from '../notify';
 
 export function App() {
   const [posts, setPosts] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [notifyStatus, setNotifyStatus] = useState(null);
 
   function handlePostLike(post) {
     const like = isLiked(post.likes, currentUser._id);
@@ -26,6 +29,12 @@ export function App() {
           return postState._id === updatePost._id ? updatePost : postState;
         });
 
+        if (like) {
+          setNotifyStatus({ status: 'error', msg: 'Лайк снят' });
+        } else {
+          setNotifyStatus({ status: 'success', msg: 'Лайк поставлен' });
+        }
+
         setPosts(newPosts);
       })
   }
@@ -35,6 +44,7 @@ export function App() {
       const newPosts = posts.filter(postState => {
         return postState._id !== deletedPost._id;
       });
+      setNotifyStatus({ status: 'error', msg: 'Пост удален' });
 
       setPosts(newPosts);
     });
@@ -50,22 +60,25 @@ export function App() {
   }, []);
 
   return (
-    <PostsContext.Provider value={{ posts, onPostLike: handlePostLike, onPostDelete: handlePostDelete }}>
-      <UserContext.Provider value={{ currentUser }}>
-        <Header currentUser={currentUser} />
+    <NotifyContext.Provider value={{ setNotifyStatus }}>
+      <PostsContext.Provider value={{ posts, onPostLike: handlePostLike, onPostDelete: handlePostDelete }}>
+        <UserContext.Provider value={{ currentUser }}>
+          <Header currentUser={currentUser} />
 
-        <main className={classNames(styles.section_large)}>
-          <Routes>
-            <Route path='/' element={<HomePage />} />
-            <Route path='/post/:postID' element={<SinglePostPage />} />
-            <Route path='/profile' element={<ProfilePage />} />
-            <Route path='*' element={<NotFoundPage />} />
-          </Routes>
-        </main>
+          <main className={classNames(styles.section_large)}>
+            <Routes>
+              <Route path='/' element={<HomePage />} />
+              <Route path='/post/:postID' element={<SinglePostPage />} />
+              <Route path='/profile' element={<ProfilePage />} />
+              <Route path='*' element={<NotFoundPage />} />
+            </Routes>
+          </main>
 
-        <Footer />
-      </UserContext.Provider >
-    </PostsContext.Provider>
+          <Footer />
+          <B8Notify status={notifyStatus?.status} msg={notifyStatus?.msg} />
+        </UserContext.Provider >
+      </PostsContext.Provider>
+    </NotifyContext.Provider>
 
 
   );

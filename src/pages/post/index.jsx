@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Post } from '../../components/post';
 import api from '../../utils/api';
 import { useParams } from 'react-router';
 import { Container } from '@mui/system';
 import { PostAlt } from '../../components/post-alt';
 import { isLiked } from '../../utils/posts';
+import { NotifyContext } from '../../contexts/notify-context';
 
 
 export function SinglePostPage() {
@@ -12,13 +13,20 @@ export function SinglePostPage() {
     const [post, setPost] = useState(null);
     const [currentUser, setCurrentUser] = useState(null);
     const [errorState, setErrorState] = useState(null);
+    const { setNotifyStatus } = useContext(NotifyContext);
     const [postComments, setPostComments] = useState(null);
+
 
     function handlePostLike(post) {
         const like = isLiked(post.likes, currentUser._id)
         api.changeLikePostStatus(post._id, like)
             .then((updatePost) => {
                 setPost(updatePost);
+                if (like) {
+                    setNotifyStatus({status: 'error', msg: 'Лайк снят'});
+                  } else {
+                    setNotifyStatus({status: 'success', msg: 'Лайк поставлен'});
+                  }
             });
     }
 
