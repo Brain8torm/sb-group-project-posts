@@ -4,7 +4,8 @@ import cn from 'classnames';
 import { isLiked } from '../../utils/posts';
 import dayjs from 'dayjs';
 
-export function Post({ _id, title, text, image, likes, postComments, currentUser }) {
+
+export function Post({ _id, title, text, image, likes, postComments, currentUser, onPostLike }) {
     let text_data = text?.split('|');
     let roles = (text_data && text_data[7].split(': ')[1].split(', '));
 
@@ -39,7 +40,7 @@ export function Post({ _id, title, text, image, likes, postComments, currentUser
     const like = isLiked(likes, currentUser?._id);
 
     function handleClickLike() {
-
+        onPostLike({ likes, _id });
     }
 
     function FireIcon(props) {
