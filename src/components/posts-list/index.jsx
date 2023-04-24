@@ -1,15 +1,21 @@
 import Masonry from '@mui/lab/Masonry';
 import { PostCard } from '../post-card';
 import { Grid, Pagination, Stack, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import usePagination from '../../hooks/usePagination';
+import { PostsContext } from '../../contexts/post-context';
 
 
-export function PostsList({ posts, type, onPostLike, currentUser, onPostDelete }) {
+export function PostsList({ type }) {
+    const { posts } = useContext(PostsContext);
+
+
     const PER_PAGE = 12;
     const [page, setPage] = useState(1);
     const count = Math.ceil((posts.length) / PER_PAGE);
     const _DATA = usePagination(posts, PER_PAGE);
+
+
 
     const handlePageChange = (event, p) => {
         setPage(p);
@@ -25,7 +31,7 @@ export function PostsList({ posts, type, onPostLike, currentUser, onPostDelete }
                         <>
                             {
                                 _DATA.currentData().map((item, index) => (
-                                    <PostCard key={index} cardImg='image' {...item} onPostLike={onPostLike} currentUser={currentUser} onPostDelete={onPostDelete} />
+                                    <PostCard key={index} cardImg='image' {...item} />
                                 ))
                             }
                         </>
@@ -38,7 +44,7 @@ export function PostsList({ posts, type, onPostLike, currentUser, onPostDelete }
                         {
                             _DATA.currentData().map((item, index) => (
                                 <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                                    <PostCard {...item} onPostLike={onPostLike} currentUser={currentUser} onPostDelete={onPostDelete} />
+                                    <PostCard {...item} />
                                 </Grid>
                             ))
 

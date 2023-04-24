@@ -4,9 +4,17 @@ import styles from './post-card.module.css';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import { isLiked } from '../../utils/posts';
+import { Link } from 'react-router-dom';
+import { PostsContext } from '../../contexts/post-context';
+import { UserContext } from '../../contexts/current-user-context';
+import { useContext } from 'react';
 
 
-export function PostCard({ _id, title, text, author, image, created_at, likes, currentUser, onPostLike, onPostDelete }) {
+export function PostCard({ _id, title, text, author, image, created_at, likes }) {
+
+    const { onPostLike, onPostDelete } = useContext(PostsContext);
+    const { currentUser } = useContext(UserContext);
+
     const like = isLiked(likes, currentUser?._id);
 
     function FireIcon(props) {
@@ -54,7 +62,7 @@ export function PostCard({ _id, title, text, author, image, created_at, likes, c
                     alt=""
                     className={classNames(styles.media)}
                 />
-                <CardHeader title={title}></CardHeader>
+                <Link to={`/post/${_id}`} className="post__link"><CardHeader title={title}></CardHeader></Link>
                 <CardContent className={classNames(styles.body)}>
                     <div className={classNames(styles.date)}><CalendarIcon fontSize="small" className={classNames(styles.date_icon)} /> {dayjs(created_at).locale('ru').format('D MMMM YYYY')}</div>
                     <p>{text}</p>
