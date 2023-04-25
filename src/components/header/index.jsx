@@ -15,8 +15,9 @@ import { B8Logo } from '../logo';
 import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 import { UserContext } from '../../contexts/current-user-context';
+import { Skeleton } from '@mui/material';
 
-export function Header() {
+export function Header({isLoading}) {
 
   const settings = ['Профиль', 'Выход'];
 
@@ -46,7 +47,11 @@ export function Header() {
       <AppBar position="static">
         <Container maxWidth="lg">
           <Toolbar>
-            <B8Logo altText='LOGO' link='/' />
+            {isLoading
+              ? <Skeleton sx={{ height: 36 }} animation="wave" variant="rectangular" />
+              :
+              <B8Logo altText='LOGO' link='/' />
+            }
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
               <IconButton
                 size="large"
@@ -86,10 +91,16 @@ export function Header() {
             <Box sx={{ flexGrow: 0, marginLeft: 'auto' }}>
               <Tooltip title="Открыть меню">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  {currentUser?.avatar
-                    ? <Avatar alt={currentUser?.name} src={currentUser?.avatar} />
-                    : <Avatar>{currentUser?.name}</Avatar>
+                  {isLoading
+                    ? <Skeleton animation="wave" variant="circular" width={40} height={40} />
+                    :
+                    <>
+                    { currentUser?.avatar
+                      ? <Avatar alt={currentUser?.name} src={currentUser?.avatar} />
+                      : <Avatar>{currentUser?.name}</Avatar>
                   }
+                  </>
+                }
                 </IconButton>
               </Tooltip>
               <Menu

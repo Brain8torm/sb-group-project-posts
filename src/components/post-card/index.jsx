@@ -1,4 +1,4 @@
-import { Avatar, Card, CardContent, CardHeader, CardMedia, SvgIcon } from '@mui/material';
+import { Avatar, Card, CardContent, CardHeader, CardMedia, Skeleton, SvgIcon } from '@mui/material';
 import classNames from 'classnames';
 import styles from './post-card.module.css';
 import dayjs from 'dayjs';
@@ -12,7 +12,7 @@ import { useContext } from 'react';
 
 export function PostCard({ _id, title, text, author, image, created_at, likes }) {
 
-    const { onPostLike, onPostDelete } = useContext(PostsContext);
+    const { isLoading, onPostLike, onPostDelete } = useContext(PostsContext);
     const { currentUser } = useContext(UserContext);
 
     const like = isLiked(likes, currentUser?._id);
@@ -58,13 +58,16 @@ export function PostCard({ _id, title, text, author, image, created_at, likes })
                     className={classNames(styles.remove_icon)}
                     onClick={handleClickRemove}
                 />
-
-                <CardMedia
-                    component="img"
-                    image={image && image}
-                    alt=""
-                    className={classNames(styles.media)}
-                />
+                {isLoading
+                    ? <Skeleton sx={{ height: 390 }} animation="wave" variant="rectangular" />
+                    :
+                    <CardMedia
+                        component="img"
+                        image={image && image}
+                        alt=""
+                        className={classNames(styles.media)}
+                    />
+                }
                 <Link to={`/post/${_id}`} className="post__link">
                     <CardHeader title={title}></CardHeader>
                 </Link>
@@ -78,11 +81,16 @@ export function PostCard({ _id, title, text, author, image, created_at, likes })
                 </CardContent>
                 <div className={styles.footer}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <Avatar
-                            aria-label="post"
-                            className={classNames(styles.avatar)}
-                            sx={{ width: 35, height: 35 }}
-                        >R</Avatar>
+                        {isLoading
+                            ? <Skeleton animation="wave" variant="circular" width={40} height={40} />
+                            :
+                            <Avatar
+                                aria-label="post"
+                                className={classNames(styles.avatar)}
+                                sx={{ width: 35, height: 35 }}
+                            >R</Avatar>
+
+                        }
                         <div
                             className={classNames(styles.author)}
                         >{author.name}</div>

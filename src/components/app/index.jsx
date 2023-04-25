@@ -20,6 +20,7 @@ export function App() {
   const [allPosts, setAllPosts] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [notifyStatus, setNotifyStatus] = useState(null);
+  const [isLoading, setIsLoading] = useState(false)
 
   function handlePostLike(post) {
     const like = isLiked(post.likes, currentUser._id);
@@ -74,12 +75,14 @@ export function App() {
   }
 
   useEffect(() => {
+    setIsLoading(true)
     api.getAllInfo()
       .then(([postsData, userInfoData]) => {
         setCurrentUser(userInfoData);
         setAllPosts(postsData);
       })
-      .catch(err => console.log(err));
+      .catch(err => console.log(err))
+      .finally(() => { setIsLoading(false) });
   }, []);
 
 
@@ -92,13 +95,21 @@ export function App() {
 
   return (
     <NotifyContext.Provider value={{ setNotifyStatus }}>
-      <PostsContext.Provider value={{ posts, onPostLike: handlePostLike, onPostDelete: handlePostDelete, onPostsSwitch: handlePostsSwitch }}>
+      <PostsContext.Provider value={
+        {
+          posts,
+          isLoading,
+          onPostLike: handlePostLike,
+          onPostDelete: handlePostDelete,
+          onPostsSwitch: handlePostsSwitch
+        }
+      }>
         <UserContext.Provider value={{ currentUser }}>
-          <Header currentUser={currentUser} />
+          <Header currentUser={currentUser} isLoading={isLoading} />
 
           <main className={classNames(styles.section_large)}>
             <Routes>
-              <Route path='/' element={<HomePage handleSwitchChange={handleSwitchChange} />} />
+              <Route path='/' element={<HomePage isLoading={isLoading} handleSwitchChange={handleSwitchChange} />} />
               <Route path='/post/:postID' element={<SinglePostPage />} />
               <Route path='/profile' element={<ProfilePage />} />
               <Route path='*' element={<NotFoundPage />} />
