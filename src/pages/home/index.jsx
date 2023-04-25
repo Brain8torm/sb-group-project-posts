@@ -2,26 +2,26 @@ import { Container, Stack, Switch, Typography } from '@mui/material';
 import { PostsList } from '../../components/posts-list';
 import { useState } from 'react';
 
+export function HomePage({handleSwitchChange}) {
 
-export function HomePage() {
+    const [isMyPosts, setIsMyPosts] = useState(true);
 
-
-    const [isMasonry, setIsMasonry] = useState(true);
-
-    function handleSwitchChange(event) {
-        setIsMasonry(event.target.checked ? true : false);
+    function onSwitchChange(event) {
+        let checked = event.target.checked ? true : false;
+        setIsMyPosts(checked);
+        handleSwitchChange(checked ? 'my' : 'other');
+        return checked;
     }
-
 
     return (
         <>
             <Container maxWidth="lg">
                 <Stack direction="row" spacing={1} alignItems="center">
-                    <Typography>Grid</Typography>
-                    <Switch checked={isMasonry} value='masonry' onChange={handleSwitchChange} name="masonry" />
-                    <Typography>Masonry</Typography>
+                    <Typography>Все</Typography>
+                    <Switch checked={isMyPosts} value={isMyPosts ? 'my' : 'other'} onChange={onSwitchChange} name="my-posts" />
+                    <Typography>Мои посты</Typography>
                 </Stack>
-                <PostsList type={isMasonry ? 'masonry' : 'grid'} />
+                <PostsList type={isMyPosts ? 'my' : 'other'} />
             </Container>
         </>
     );
