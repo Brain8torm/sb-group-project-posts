@@ -1,8 +1,9 @@
 import { Container, Stack, Switch, Typography } from '@mui/material';
 import { PostsList } from '../../components/posts-list';
 import { useState } from 'react';
+import { Spinner } from '../../components/spinner';
 
-export function HomePage({handleSwitchChange}) {
+export function HomePage({ isLoading, handleSwitchChange }) {
 
     const [isMyPosts, setIsMyPosts] = useState(true);
 
@@ -21,6 +22,7 @@ export function HomePage({handleSwitchChange}) {
                     <Switch checked={isMyPosts} value={isMyPosts ? 'my' : 'other'} onChange={onSwitchChange} name="my-posts" />
                     <Typography>Мои посты</Typography>
                 </Stack>
+
                 <PostsList type={isMyPosts ? 'my' : 'other'} />
             </Container>
         </>
