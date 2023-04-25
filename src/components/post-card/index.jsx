@@ -54,7 +54,10 @@ export function PostCard({ _id, title, text, author, image, created_at, likes })
     return (
         <Card sx={{ maxWidth: 345 }} className={classNames(styles.item)} data-id={_id}>
             <div className={classNames(styles.wrapper)}>
-                <CloseIcon className={classNames(styles.remove_icon)} onClick={handleClickRemove} />
+                <CloseIcon
+                    className={classNames(styles.remove_icon)}
+                    onClick={handleClickRemove}
+                />
 
                 <CardMedia
                     component="img"
@@ -62,20 +65,34 @@ export function PostCard({ _id, title, text, author, image, created_at, likes })
                     alt=""
                     className={classNames(styles.media)}
                 />
-                <Link to={`/post/${_id}`} className="post__link"><CardHeader title={title}></CardHeader></Link>
+                <Link to={`/post/${_id}`} className="post__link">
+                    <CardHeader title={title}></CardHeader>
+                </Link>
                 <CardContent className={classNames(styles.body)}>
-                    <div className={classNames(styles.date)}><CalendarIcon fontSize="small" className={classNames(styles.date_icon)} /> {dayjs(created_at).locale('ru').format('D MMMM YYYY')}</div>
-                    <p>{text}</p>
-
+                    <div className={classNames(styles.date)}>
+                        <CalendarIcon
+                            fontSize="small"
+                            className={classNames(styles.date_icon)}
+                        /> {dayjs(created_at).locale('ru').format('D MMMM YYYY')}
+                    </div>
                 </CardContent>
                 <div className={styles.footer}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <Avatar aria-label="post" className={classNames(styles.avatar)} sx={{ width: 35, height: 35 }}>
-                            R
-                        </Avatar>
-                        <div className={classNames(styles.author)}>{author.name}</div>
+                        <Avatar
+                            aria-label="post"
+                            className={classNames(styles.avatar)}
+                            sx={{ width: 35, height: 35 }}
+                        >R</Avatar>
+                        <div
+                            className={classNames(styles.author)}
+                        >{author.name}</div>
                     </div>
-                    <div data-like={like} className={classNames(styles.like, { [styles.like__active]: like })} style={{ display: 'flex', alignItems: 'center' }} onClick={handleClickLike}><FireIcon /> {likes?.length}</div>
+                    <div
+                        data-like={like}
+                        className={classNames(styles.like, { [styles.like__active]: like })}
+                        style={{ display: 'flex', alignItems: 'center' }}
+                        onClick={handleClickLike}
+                    ><FireIcon /> {likes?.length}</div>
                 </div>
             </div>
         </Card>

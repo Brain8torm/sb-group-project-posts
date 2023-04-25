@@ -17,6 +17,7 @@ import B8Notify from '../notify';
 
 export function App() {
   const [posts, setPosts] = useState([]);
+  const [allPosts, setAllPosts] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [notifyStatus, setNotifyStatus] = useState(null);
 
@@ -39,6 +40,24 @@ export function App() {
       })
   }
 
+  function handleSwitchChange(type) {
+
+    let newPosts = null;
+    const oldPosts = allPosts;
+
+    if (type === 'my') {
+      newPosts = posts.filter((post) => {
+        if (post?.author._id === currentUser?._id) {
+          return true;
+        } else return false;
+      });
+      setPosts(newPosts);
+    } else {
+      setPosts(oldPosts);
+    }
+
+  }
+
   function handlePostDelete(post) {
     api.deletePostById(post._id).then((deletedPost) => {
       const newPosts = posts.filter(postState => {
@@ -50,24 +69,36 @@ export function App() {
     });
   }
 
+  function handlePostsSwitch() {
+
+  }
+
   useEffect(() => {
     api.getAllInfo()
       .then(([postsData, userInfoData]) => {
         setCurrentUser(userInfoData);
-        setPosts(postsData);
+        setAllPosts(postsData);
       })
-      .catch(err => console.log(err))
+      .catch(err => console.log(err));
   }, []);
+
+
+  useEffect(() => {
+    const myPosts = allPosts.filter((post) => {
+      return post.author._id === currentUser._id;
+    });
+    setPosts(myPosts);
+  }, [allPosts]);
 
   return (
     <NotifyContext.Provider value={{ setNotifyStatus }}>
-      <PostsContext.Provider value={{ posts, onPostLike: handlePostLike, onPostDelete: handlePostDelete }}>
+      <PostsContext.Provider value={{ posts, onPostLike: handlePostLike, onPostDelete: handlePostDelete, onPostsSwitch: handlePostsSwitch }}>
         <UserContext.Provider value={{ currentUser }}>
           <Header currentUser={currentUser} />
 
           <main className={classNames(styles.section_large)}>
             <Routes>
-              <Route path='/' element={<HomePage />} />
+              <Route path='/' element={<HomePage handleSwitchChange={handleSwitchChange} />} />
               <Route path='/post/:postID' element={<SinglePostPage />} />
               <Route path='/profile' element={<ProfilePage />} />
               <Route path='*' element={<NotFoundPage />} />
