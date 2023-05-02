@@ -76,6 +76,14 @@ class Api {
       method: 'DELETE',
     }).then(this.#onResponse);
   }
+
+  addPost(postData) {
+    return fetch(this.#getApiUrl('/posts'), {
+      headers: this.#headers,
+      method: 'POST',
+      body: JSON.stringify(postData)
+    }).then(this.#onResponse);
+  }
 }
 
 const api = new Api({
