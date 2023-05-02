@@ -14,6 +14,7 @@ import { UserContext } from '../../contexts/current-user-context';
 import { PostsContext } from '../../contexts/post-context';
 import { NotifyContext } from '../../contexts/notify-context';
 import B8Notify from '../notify';
+import { FormAddPost } from '../forms';
 
 export function App() {
   const [posts, setPosts] = useState([]);
@@ -93,6 +94,46 @@ export function App() {
     setPosts(myPosts);
   }, [allPosts]);
 
+  const cbSubmitFormAddPost = (dataForm) => {
+    let movieData = [];
+    let postData = {
+      title: '',
+      text: '',
+      image: ''
+    };
+
+    Object.keys(dataForm).find((a) => {
+      
+      if (a.includes("movie")) {
+        if (a === 'movie-year') {
+          movieData.push(`Год: ${dataForm[a]}`);
+        } else if (a === 'movie-director') {
+          movieData.push(`Режиссер: ${dataForm[a]}`);
+        } else if (a === 'movie-country') {
+          movieData.push(`Страна: ${dataForm[a]}`);
+        } else if (a === 'movie-genre') {
+          movieData.push(`Жанр: ${dataForm[a]}`);
+        } else if (a === 'movie-kp') {
+          movieData.push(`КП: ${dataForm[a]}`);
+        } else if (a === 'movie-imdb') {
+          movieData.push(`IMDb: ${dataForm[a]}`);
+        } else if (a === 'movie-actors') {
+          movieData.push(`В ролях: ${dataForm[a]}`);
+        }
+      };
+    });
+
+    postData.title = dataForm.title;
+    postData.text = dataForm.text + '|' + movieData.join('|');
+    postData.image = dataForm.image;
+    
+    api.addPost(postData).then(() => {
+      setNotifyStatus({ status: 'success', msg: 'Пост добавлен' });
+    }).catch(err => console.log(err));
+    console.log(dataForm);
+  };
+
+
   return (
     <NotifyContext.Provider value={{ setNotifyStatus }}>
       <PostsContext.Provider value={
@@ -112,16 +153,16 @@ export function App() {
               <Route path='/' element={<HomePage isLoading={isLoading} handleSwitchChange={handleSwitchChange} />} />
               <Route path='/post/:postID' element={<SinglePostPage />} />
               <Route path='/profile' element={<ProfilePage />} />
+              <Route path='/add-post' element={<FormAddPost onSubmit={cbSubmitFormAddPost} />}></Route>
               <Route path='*' element={<NotFoundPage />} />
             </Routes>
           </main>
 
           <Footer />
           <B8Notify status={notifyStatus?.status} msg={notifyStatus?.msg} />
+
         </UserContext.Provider >
       </PostsContext.Provider>
     </NotifyContext.Provider>
-
-
   );
 }

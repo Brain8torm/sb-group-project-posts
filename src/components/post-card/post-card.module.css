@@ -11,6 +11,7 @@
 .media {
   border-top-right-radius: 15px;
   border-top-left-radius: 15px;
+  max-height: 390px;
 }
 .avatar {
   margin-right: 13px;
