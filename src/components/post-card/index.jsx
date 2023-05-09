@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import { isLiked } from '../../utils/posts';
 import { Link } from 'react-router-dom';
-import { PostsContext } from '../../contexts/post-context';
+import { PostsContext } from '../../contexts/posts-context';
 import { UserContext } from '../../contexts/current-user-context';
 import { useContext } from 'react';
 

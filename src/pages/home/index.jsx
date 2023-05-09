@@ -1,11 +1,16 @@
 import { Container, Stack, Switch, Typography } from '@mui/material';
 import { PostsList } from '../../components/posts-list';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Spinner } from '../../components/spinner';
+import { ActionsContext } from '../../contexts/actions-context';
+import { Link, useLocation } from 'react-router-dom';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
 export function HomePage({ isLoading, handleSwitchChange }) {
 
     const [isMyPosts, setIsMyPosts] = useState(true);
+    const { setQuickActions } = useContext(ActionsContext);
+    const location = useLocation();
 
     function onSwitchChange(event) {
         let checked = event.target.checked ? true : false;
@@ -13,6 +18,19 @@ export function HomePage({ isLoading, handleSwitchChange }) {
         handleSwitchChange(checked ? 'my' : 'other');
         return checked;
     }
+
+    useEffect(() => {
+        setQuickActions(
+            [
+                {
+                    icon: <Link className='speed-dial__action' replace to='/add-post' state={{
+                        backgroundLocation: location,
+                        initialPath: location.pathname,
+                    }}><AddOutlinedIcon /></Link>, name: 'Добавить'
+                },
+            ]
+        )
+    }, [])
 
     return (
         <>

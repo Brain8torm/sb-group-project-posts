@@ -1,6 +1,6 @@
 import { Alert, AlertTitle, Avatar, Card, CardContent, CardHeader, Grid, Rating, SvgIcon, Typography } from '@mui/material';
-import s from './post.module.css';
-import cn from 'classnames';
+import styles from './post.module.css';
+import classNames from 'classnames';
 import { isLiked } from '../../utils/posts';
 import dayjs from 'dayjs';
 
@@ -53,50 +53,48 @@ export function Post({ _id, title, text, image, likes, postComments, currentUser
 
     return (
         <>
-            <div className={cn('post', s.wrapper)}>
+            <div className={classNames('post', styles.wrapper)}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6} md={4}>
                         {image
                             ?
-                            <img className={cn(s.poster)} src={image} alt={title} />
+                            <img className={styles.poster} src={image} alt={title} />
                             : <></>
                         }
                     </Grid>
                     <Grid item xs={12} sm={6} md={8}>
-                        <div className={cn(s.inner)}>
+                        <div className={styles.inner}>
+                            <Typography className={styles.h1} component='h1' variant='h4'>{title}</Typography>
 
-
-                            <Typography component='h1' variant='h4'>{title}</Typography>
-
-                            <div className={cn(s.like_block)}>
-                                <div className={cn(s.like_status)}>
+                            <div className={styles.like_block}>
+                                <div className={styles.like_status}>
                                     Поставь лайк!
                                 </div>
                                 <div
                                     data-like={like}
-                                    className={cn(s.like, { [s.like__active]: like })}
+                                    className={classNames(styles.like, { [styles.like__active]: like })}
                                     style={{ display: 'flex', alignItems: 'center' }}
                                     onClick={handleClickLike}
                                 ><FireIcon /> {likes?.length}</div>
                             </div>
 
                             {(text_data) &&
-                                <div className={cn(s.info_wrapper)}>
-                                    <div className={cn(s.meta_wraper)}>
-                                        <div className={cn(s.meta)}>
+                                <div className={styles.info_wrapper}>
+                                    <div className={styles.meta_wraper}>
+                                        <div className={styles.meta}>
                                             <div>{text_data[1]}</div>
                                             <div>{text_data[2]}</div>
                                             <div>{text_data[3]}</div>
                                             <div>{text_data[4]}</div>
 
                                         </div>
-                                        <div className={cn(s.rating)}>
-                                            <div className={cn(s.rating_wrapper)}>
-                                                <div className={cn(s.rating_title)}>
+                                        <div className={styles.rating}>
+                                            <div className={styles.rating_wrapper}>
+                                                <div className={styles.rating_title}>
                                                     <strong>Рейтинги</strong>
                                                 </div>
-                                                <div className={cn(s.rating_data)}>
-                                                    <div className={cn(s.rating_kp)}>
+                                                <div className={styles.rating_data}>
+                                                    <div className={styles.rating_kp}>
                                                         <Rating
                                                             name="kp"
                                                             value={+text_data[5].split(': ')[1]}
@@ -106,7 +104,7 @@ export function Post({ _id, title, text, image, likes, postComments, currentUser
                                                             precision={0.1}
                                                         /><span>{text_data[5]}</span>
                                                     </div>
-                                                    <div className={cn(s.rating_imdb)}>
+                                                    <div className={styles.rating_imdb}>
                                                         <Rating
                                                             name="imdb"
                                                             value={+text_data[6].split(': ')[1]}
@@ -120,21 +118,21 @@ export function Post({ _id, title, text, image, likes, postComments, currentUser
                                             </div>
 
                                         </div>
-                                        <div className={cn(s.roles)}>
-                                            <div className={cn(s.roles_title)}><strong>В ролях:</strong></div>
-                                            <div className={cn(s.roles_list)}>
+                                        <div className={styles.roles}>
+                                            <div className={styles.roles_title}><strong>В ролях:</strong></div>
+                                            <div className={styles.roles_list}>
                                                 {
                                                     roles?.map((r, i) => (
-                                                        <div className={cn(s.roles_item)} key={i}>{r}</div>
+                                                        <div className={styles.roles_item} key={i}>{r}</div>
                                                     ))
                                                 }
-                                                <div className={cn(s.roles_item)}>и другие</div>
+                                                <div className={styles.roles_item}>и другие</div>
                                             </div>
                                         </div>
 
                                     </div>
 
-                                    <div className={cn(s.description)}>
+                                    <div className={styles.description}>
                                         {text_data[0]}
                                     </div>
                                 </div>
@@ -143,16 +141,16 @@ export function Post({ _id, title, text, image, likes, postComments, currentUser
                     </Grid>
                 </Grid>
 
-                <div className={cn('comments', s.comments__wrapper)}>
-                    <Typography variant="h4" component="h4" className={cn(s.comments_title)}>
+                <div className={classNames('comments', styles.comments__wrapper)}>
+                    <Typography variant="h4" component="h4" className={styles.comments_title}>
                         Комментарии
                     </Typography>
                     {(postComments?.length)
                         ?
-                        <div className={cn(s.comments_list)}>
+                        <div className={styles.comments_list}>
                             {
                                 postComments?.map((comment, index) => (
-                                    <Card key={index} className={cn('comment', s.comment_item)}>
+                                    <Card key={index} className={classNames('comment', styles.comment_item)}>
                                         <CardHeader
                                             avatar={comment.author?.avatar
                                                 ?

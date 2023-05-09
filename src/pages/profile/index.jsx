@@ -2,7 +2,7 @@ import { Avatar, Grid, IconButton, List, ListItem, ListItemIcon, ListItemText, T
 import { Container } from '@mui/system';
 import { useContext } from 'react';
 import { UserContext } from '../../contexts/current-user-context';
-import { PostsContext } from '../../contexts/post-context';
+import { PostsContext } from '../../contexts/posts-context';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';

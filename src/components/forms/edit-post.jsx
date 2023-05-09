@@ -7,20 +7,30 @@ import styles from './forms.module.css';
 import classNames from 'classnames';
 import { FormButton } from '../form-button';
 import { genres } from '../../utils/config';
+import { getLocalData } from '../../utils/localStorage';
 
-export function FormAddPost({ onSubmit }) {
+export function FormEditPost({ onSubmit }) {
 
     const { control, handleSubmit, formState: { errors } } = useForm({ mode: "onBlur" });
 
     const [isMoviePosts, setIsMoviePosts] = useState(true);
 
+    let post = getLocalData('currentPost');
+
+    let text_data = post?.text?.split('|');
+    let roles = (text_data && text_data[7].split(': ')[1]);
+
+    //console.log('roles', post.tags);
+
     let propsPostTitle = {};
     let propsPostText = {};
     let propsPostImage = {
         label: isMoviePosts ? 'Постер фильма' : 'Изображение поста',
+        value: post.image
     };
     propsPostTitle.label = isMoviePosts ? 'Название фильма' : 'Заголовок поста';
     propsPostTitle.required = true;
+    propsPostTitle.value = post.title;
     if (errors['post-title']) {
         propsPostTitle.error = true;
         propsPostTitle.label = 'Ошибка'
@@ -28,6 +38,7 @@ export function FormAddPost({ onSubmit }) {
     }
     propsPostText.label = isMoviePosts ? 'Описание фильма' : 'Текст поста';
     propsPostText.required = true;
+    propsPostText.value = isMoviePosts ? text_data[0] : post.text;
     if (errors['post-text']) {
         propsPostText.error = true;
         propsPostText.label = 'Ошибка'
@@ -36,32 +47,39 @@ export function FormAddPost({ onSubmit }) {
 
     let propsMovieYear = {
         label: 'Год выпуска',
+        value: text_data[1].split(': ')[1]
     }
 
     let propsMovieDirector = {
         label: 'Режиссер',
+        value: text_data[2].split(': ')[1]
     }
 
     let propsMovieCountry = {
         label: 'Страна',
+        value: text_data[3].split(': ')[1]
     }
 
     let propsMovieGenre = {
         label: 'Жанр',
+        value: text_data[4].split(': ')[1]
     }
 
     let propsMovieActors = {
         label: 'Актеры',
+        value: roles
     }
 
     let propsMovieKP = {
         label: 'Рейтинг КиноПоиск',
         type: 'number',
+        value: +text_data[5].split(': ')[1]
     }
 
     let propsMovieIMDb = {
         label: 'Рейтинг IMDb',
         type: 'number',
+        value: +text_data[6].split(': ')[1]
     }
 
     function onSwitchChange(event) {
@@ -78,6 +96,7 @@ export function FormAddPost({ onSubmit }) {
 
     const [open, setOpen] = useState(false);
     const [options, setOptions] = useState([]);
+    const [val, setVal] = useState([]);
     const loading = open && options.length === 0;
 
     useEffect(() => {
@@ -107,6 +126,8 @@ export function FormAddPost({ onSubmit }) {
     }, [open]);
 
 
+
+
     return (
 
         <div className={classNames(styles.wrapper)}>
@@ -122,7 +143,7 @@ export function FormAddPost({ onSubmit }) {
                 <div className={styles.switcher_label}>Фильм</div>
             </div>
             <Form
-                title={isMoviePosts ? 'Добавить фильм' : 'Добавить пост'}
+                title={isMoviePosts ? 'Изменить фильм' : 'Изменить пост'}
                 handleFormSubmit={handleSubmit(onSubmit)}
             >
                 <div className={styles.row}>
@@ -325,7 +346,7 @@ export function FormAddPost({ onSubmit }) {
                                         getOptionLabel={(option) => option}
                                         options={options}
                                         loading={loading}
-
+                                        value={val}
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
@@ -351,7 +372,7 @@ export function FormAddPost({ onSubmit }) {
                     </div>
                 }
                 <div className={styles.row}>
-                    <FormButton type='submit'>Отправить</FormButton>
+                    <FormButton type='submit' action={null}>Отправить</FormButton>
                 </div>
             </Form>
 
