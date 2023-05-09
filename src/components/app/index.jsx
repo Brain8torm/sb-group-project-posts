@@ -1,168 +1,329 @@
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';
-import styles from "./app.module.css";
+import styles from './app.module.css';
 import api from '../../utils/api';
 import { Header } from '../header';
 import { Footer } from '../footer';
 import { HomePage } from '../../pages/home';
 import { isLiked } from '../../utils/posts';
 import { SinglePostPage } from '../../pages/post';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { NotFoundPage } from '../../pages/not-found';
 import { ProfilePage } from '../../pages/profile';
 import { UserContext } from '../../contexts/current-user-context';
-import { PostsContext } from '../../contexts/post-context';
+import { PostsContext } from '../../contexts/posts-context';
 import { NotifyContext } from '../../contexts/notify-context';
 import B8Notify from '../notify';
 import { FormAddPost } from '../forms';
+import { B8Modal } from '../modal';
+import { Login } from '../login';
+import { Register } from '../register';
+import { AddPostPage } from '../../pages/add-post/inpedx';
+import { EditPostPage } from '../../pages/edit-post';
+import { FormEditPost } from '../forms/edit-post';
+import { ActionsContext } from '../../contexts/actions-context';
+import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@mui/material';
 
 export function App() {
-  const [posts, setPosts] = useState([]);
-  const [allPosts, setAllPosts] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [notifyStatus, setNotifyStatus] = useState(null);
-  const [isLoading, setIsLoading] = useState(false)
+    const [posts, setPosts] = useState([]);
+    const [allPosts, setAllPosts] = useState([]);
+    const [currentUser, setCurrentUser] = useState(null);
+    const [notifyStatus, setNotifyStatus] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [quickActions, setQuickActions] = useState([]);
 
-  function handlePostLike(post) {
-    const like = isLiked(post.likes, currentUser._id);
+    console.log('quickActions', quickActions);
 
-    api.changeLikePostStatus(post._id, like)
-      .then((updatePost) => {
-        const newPosts = posts.map(postState => {
-          return postState._id === updatePost._id ? updatePost : postState;
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const backgroundLocation = location.state?.backgroundLocation;
+    const initialPath = location.state?.initialPath;
+
+    function handlePostLike(post) {
+        const like = isLiked(post.likes, currentUser._id);
+
+        api.changeLikePostStatus(post._id, like).then((updatePost) => {
+            const newPosts = posts.map((postState) => {
+                return postState._id === updatePost._id ? updatePost : postState;
+            });
+
+            if (like) {
+                setNotifyStatus({ status: 'error', msg: 'Лайк снят' });
+            } else {
+                setNotifyStatus({ status: 'success', msg: 'Лайк поставлен' });
+            }
+
+            setPosts(newPosts);
         });
-
-        if (like) {
-          setNotifyStatus({ status: 'error', msg: 'Лайк снят' });
-        } else {
-          setNotifyStatus({ status: 'success', msg: 'Лайк поставлен' });
-        }
-
-        setPosts(newPosts);
-      })
-  }
-
-  function handleSwitchChange(type) {
-
-    let newPosts = null;
-    const oldPosts = allPosts;
-
-    if (type === 'my') {
-      newPosts = posts.filter((post) => {
-        if (post?.author._id === currentUser?._id) {
-          return true;
-        } else return false;
-      });
-      setPosts(newPosts);
-    } else {
-      setPosts(oldPosts);
     }
 
-  }
+    function handleSwitchChange(type) {
+        let newPosts = null;
+        const oldPosts = allPosts;
 
-  function handlePostDelete(post) {
-    api.deletePostById(post._id).then((deletedPost) => {
-      const newPosts = posts.filter(postState => {
-        return postState._id !== deletedPost._id;
-      });
-      setNotifyStatus({ status: 'error', msg: 'Пост удален' });
+        if (type === 'my') {
+            newPosts = posts.filter((post) => {
+                if (post?.author._id === currentUser?._id) {
+                    return true;
+                } else return false;
+            });
+            setPosts(newPosts);
+        } else {
+            setPosts(oldPosts);
+        }
+    }
 
-      setPosts(newPosts);
-    });
-  }
+    function handlePostDelete(post) {
+        api.deletePostById(post._id).then((deletedPost) => {
+            const newPosts = posts.filter((postState) => {
+                return postState._id !== deletedPost._id;
+            });
+            setNotifyStatus({ status: 'error', msg: 'Пост удален' });
 
-  function handlePostsSwitch() {
+            setPosts(newPosts);
+        });
+    }
 
-  }
+    function handlePostsSwitch() { }
 
-  useEffect(() => {
-    setIsLoading(true)
-    api.getAllInfo()
-      .then(([postsData, userInfoData]) => {
-        setCurrentUser(userInfoData);
-        setAllPosts(postsData);
-      })
-      .catch(err => console.log(err))
-      .finally(() => { setIsLoading(false) });
-  }, []);
-
-
-  useEffect(() => {
-    const myPosts = allPosts.filter((post) => {
-      return post.author._id === currentUser._id;
-    });
-    setPosts(myPosts);
-  }, [allPosts]);
-
-  const cbSubmitFormAddPost = (dataForm) => {
-    let movieData = [];
-    let postData = {
-      title: '',
-      text: '',
-      image: ''
+    const onCloseRoutingModal = () => {
+        navigate(initialPath || '/', { replace: true });
     };
 
-    Object.keys(dataForm).find((a) => {
-      
-      if (a.includes("movie")) {
-        if (a === 'movie-year') {
-          movieData.push(`Год: ${dataForm[a]}`);
-        } else if (a === 'movie-director') {
-          movieData.push(`Режиссер: ${dataForm[a]}`);
-        } else if (a === 'movie-country') {
-          movieData.push(`Страна: ${dataForm[a]}`);
-        } else if (a === 'movie-genre') {
-          movieData.push(`Жанр: ${dataForm[a]}`);
-        } else if (a === 'movie-kp') {
-          movieData.push(`КП: ${dataForm[a]}`);
-        } else if (a === 'movie-imdb') {
-          movieData.push(`IMDb: ${dataForm[a]}`);
-        } else if (a === 'movie-actors') {
-          movieData.push(`В ролях: ${dataForm[a]}`);
-        }
-      };
-    });
+    useEffect(() => {
+        setIsLoading(true);
+        api.getAllInfo()
+            .then(([postsData, userInfoData]) => {
+                setCurrentUser(userInfoData);
+                setAllPosts(postsData);
+            })
+            .catch((err) => console.log(err))
+            .finally(() => {
+                setIsLoading(false);
+            });
 
-    postData.title = dataForm.title;
-    postData.text = dataForm.text + '|' + movieData.join('|');
-    postData.image = dataForm.image;
-    
-    api.addPost(postData).then(() => {
-      setNotifyStatus({ status: 'success', msg: 'Пост добавлен' });
-    }).catch(err => console.log(err));
-    console.log(dataForm);
-  };
+    }, []);
+
+    useEffect(() => {
+        const myPosts = allPosts.filter((post) => {
+            return post.author._id === currentUser._id;
+        });
+        setPosts(myPosts);
+    }, [allPosts]);
+
+    const cbSubmitFormAddPost = (dataForm) => {
+        let movieData = [];
+        let postData = {
+            title: '',
+            text: '',
+            image: '',
+        };
+
+        Object.keys(dataForm).find((a) => {
+            if (a.includes('movie')) {
+                if (a === 'movie-year') {
+                    movieData.push(`Год: ${dataForm[a]}`);
+                } else if (a === 'movie-director') {
+                    movieData.push(`Режиссер: ${dataForm[a]}`);
+                } else if (a === 'movie-country') {
+                    movieData.push(`Страна: ${dataForm[a]}`);
+                } else if (a === 'movie-genre') {
+                    movieData.push(`Жанр: ${dataForm[a]}`);
+                } else if (a === 'movie-kp') {
+                    movieData.push(`КП: ${dataForm[a]}`);
+                } else if (a === 'movie-imdb') {
+                    movieData.push(`IMDb: ${dataForm[a]}`);
+                } else if (a === 'movie-actors') {
+                    movieData.push(`В ролях: ${dataForm[a]}`);
+                }
+            }
+        });
+
+        postData.title = dataForm.title;
+        postData.text = dataForm.text + '|' + movieData.join('|');
+        postData.image = dataForm.image;
+
+        api.addPost(postData)
+            .then(() => {
+                setNotifyStatus({ status: 'success', msg: 'Пост добавлен' });
+            })
+            .catch((err) => console.log(err));
+        //console.log(dataForm);
+    };
+
+    const cbSubmitFormEditPost = (dataForm) => {
+        console.log('cbSubmitFormEditPost', dataForm);
+    }
 
 
-  return (
-    <NotifyContext.Provider value={{ setNotifyStatus }}>
-      <PostsContext.Provider value={
-        {
-          posts,
-          isLoading,
-          onPostLike: handlePostLike,
-          onPostDelete: handlePostDelete,
-          onPostsSwitch: handlePostsSwitch
-        }
-      }>
-        <UserContext.Provider value={{ currentUser }}>
-          <Header currentUser={currentUser} isLoading={isLoading} />
+    const cbSubmitFormLoginRegister = (dataForm) => {
+        console.log('cbSubmitFormLoginRegister', dataForm);
+    }
+    const cbSubmitFormLogin = (dataForm) => {
+        console.log('cbSubmitFormLogin', dataForm);
+    }
+    const cbSubmitFormResetPassword = (dataForm) => {
+        console.log('cbSubmitFormResetPassword', dataForm);
+    }
 
-          <main className={classNames(styles.section_large)}>
-            <Routes>
-              <Route path='/' element={<HomePage isLoading={isLoading} handleSwitchChange={handleSwitchChange} />} />
-              <Route path='/post/:postID' element={<SinglePostPage />} />
-              <Route path='/profile' element={<ProfilePage />} />
-              <Route path='/add-post' element={<FormAddPost onSubmit={cbSubmitFormAddPost} />}></Route>
-              <Route path='*' element={<NotFoundPage />} />
-            </Routes>
-          </main>
+    const handleClickButtonLogin = (e) => {
+        e.preventDefault();
+        navigate('/login', { replace: true, state: { backgroundLocation: { ...location, state: null }, initialPath } })
+    }
+    const handleClickButtonReset = (e) => {
+        e.preventDefault();
+        navigate('/reset-password', { replace: true, state: { backgroundLocation: { ...location, state: null }, initialPath } })
+    }
+    const handleClickButtonRegister = (e) => {
+        e.preventDefault();
+        console.log('register click');
+        navigate('/register', { replace: true, state: { backgroundLocation: { ...location, state: null }, initialPath } })
+    }
+    const handleClickButtonResetNotModal = (e) => {
+        e.preventDefault();
+        navigate('/reset-password')
+    }
+    const handleClickButtonRegisterNotModal = (e) => {
+        e.preventDefault();
+        navigate('/register')
+    }
+    const handleClickButtonLoginNotModal = (e) => {
+        e.preventDefault();
+        navigate('/login')
+    }
 
-          <Footer />
-          <B8Notify status={notifyStatus?.status} msg={notifyStatus?.msg} />
 
-        </UserContext.Provider >
-      </PostsContext.Provider>
-    </NotifyContext.Provider>
-  );
+
+    return (
+        <NotifyContext.Provider value={{ setNotifyStatus }}>
+            <PostsContext.Provider
+                value={{
+                    posts,
+                    isLoading,
+                    onPostLike: handlePostLike,
+                    onPostDelete: handlePostDelete,
+                    onPostsSwitch: handlePostsSwitch,
+                }}
+            >
+                <ActionsContext.Provider
+                    value={{ setQuickActions }}>
+                    <UserContext.Provider value={{ currentUser }}>
+                        <Header currentUser={currentUser} isLoading={isLoading} />
+
+                        <main className={classNames(styles.section_large)}>
+                            <Routes
+                                location={
+                                    (backgroundLocation && {
+                                        ...backgroundLocation,
+                                        pathname: initialPath,
+                                    }) ||
+                                    location
+                                }
+                            >
+                                <Route
+                                    path='/'
+                                    element={
+                                        <HomePage
+                                            isLoading={isLoading}
+                                            handleSwitchChange={handleSwitchChange}
+                                        />
+                                    }
+                                />
+                                <Route
+                                    path='/post/:postID'
+                                    element={<SinglePostPage />} />
+                                <Route path="/profile" element={<ProfilePage />} />
+                                <Route
+                                    path='/add-post'
+                                    element={<AddPostPage handleFormSubmit={cbSubmitFormAddPost} />}
+                                ></Route>
+                                <Route
+                                    path='/edit-post/:postID'
+                                    element={<EditPostPage handleFormSubmit={cbSubmitFormEditPost} />}
+                                ></Route>
+                                <Route
+                                    path='/login'
+                                    element={<Login
+                                        onSubmit={cbSubmitFormLogin}
+                                        onNavigateRegister={handleClickButtonRegisterNotModal}
+                                        onNavigateReset={handleClickButtonResetNotModal} />} />
+                                <Route
+                                    path='/register'
+                                    element={<Register
+                                        onSubmit={cbSubmitFormLoginRegister}
+                                        onNavigateLogin={handleClickButtonLoginNotModal} />} />
+                                <Route path='/reset-password' element={123} />
+                                <Route path="*" element={<NotFoundPage />} />
+                            </Routes>
+                        </main>
+
+                        <Footer />
+
+                        <B8Notify status={notifyStatus?.status} msg={notifyStatus?.msg} />
+
+                        <SpeedDial
+                            ariaLabel="SpeedDial"
+                            sx={{ position: 'fixed', bottom: 16, right: 16 }}
+                            icon={<SpeedDialIcon />}
+                        >
+                            {quickActions.map((action) => (
+                                <SpeedDialAction
+                                    key={action.name}
+                                    icon={action.icon}
+                                    tooltipTitle={action.name}
+
+                                />
+                            ))}
+                        </SpeedDial>
+
+                        {backgroundLocation && (
+                            <Routes>
+                                <Route
+                                    path='/login'
+                                    element={
+                                        <B8Modal isOpen onClose={onCloseRoutingModal}>
+                                            <Login
+                                                onSubmit={cbSubmitFormLogin}
+                                                onNavigateRegister={handleClickButtonRegister}
+                                                onNavigateReset={handleClickButtonReset}
+                                            />
+                                        </B8Modal>
+                                    }
+                                />
+                                <Route
+                                    path='/register'
+                                    element={
+                                        <B8Modal isOpen onClose={onCloseRoutingModal}>
+                                            <Register
+                                                onSubmit={cbSubmitFormLoginRegister}
+                                                onNavigateLogin={handleClickButtonLogin}
+                                            />
+                                        </B8Modal>
+                                    }
+                                />
+                                <Route
+                                    path='/add-post'
+                                    element={
+                                        <B8Modal isOpen onClose={onCloseRoutingModal}>
+                                            <FormAddPost onSubmit={cbSubmitFormAddPost} />
+                                        </B8Modal>
+                                    }
+                                />
+                                <Route
+                                    path='/edit-post/:postID'
+                                    element={
+                                        <B8Modal isOpen onClose={onCloseRoutingModal}>
+                                            <FormEditPost onSubmit={cbSubmitFormEditPost} />
+                                        </B8Modal>
+                                    }
+                                />
+                                <Route path="/reset-password" element={<B8Modal isOpen>123</B8Modal>} />
+                            </Routes>
+                        )}
+                    </UserContext.Provider>
+                </ActionsContext.Provider>
+            </PostsContext.Provider>
+        </NotifyContext.Provider>
+    );
 }

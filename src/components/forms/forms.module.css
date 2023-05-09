@@ -23,19 +23,26 @@
 .movie_fields {
     display: grid;
     grid-gap: 15px;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(10, 1fr);
 }
 
-
+.movie_fields .row:nth-child(1) {
+    grid-column: 1 / 4;
+}
 .movie_fields .row:nth-child(2) {
-    grid-column-start: 2;
-    grid-column-end: 4;
+    grid-column: 4 / 8;
 }
 .movie_fields .row:nth-child(4) {
-    grid-column-start: 1;
-    grid-column-end: 3;
+    grid-column: 1 / 5;
 }
-.movie_fields .row:nth-child(7) {
-    grid-column-start: 1;
-    grid-column-end: 5;
+.movie_fields .row:nth-child(5) {
+    grid-column: 5 / 8;
+}
+.movie_fields .row:nth-child(3),
+.movie_fields .row:nth-child(6) {
+    grid-column: 8 / 11;
+}
+.movie_fields .row:nth-child(7),
+.movie_fields .row:nth-child(8) {
+    grid-column: 1 / 11;
 }

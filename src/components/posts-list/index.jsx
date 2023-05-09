@@ -2,7 +2,7 @@ import { PostCard } from '../post-card';
 import { Grid, Pagination, Stack, Typography } from '@mui/material';
 import { useContext, useState } from 'react';
 import usePagination from '../../hooks/usePagination';
-import { PostsContext } from '../../contexts/post-context';
+import { PostsContext } from '../../contexts/posts-context';
 
 export function PostsList({ type }) {
     const { posts } = useContext(PostsContext);
