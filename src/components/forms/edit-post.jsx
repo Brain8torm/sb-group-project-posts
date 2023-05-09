@@ -17,70 +17,74 @@ export function FormEditPost({ onSubmit }) {
 
     let post = getLocalData('currentPost');
 
-    let text_data = post?.text?.split('|');
-    let roles = (text_data && text_data[7].split(': ')[1]);
-
-    //console.log('roles', post.tags);
+    let textData = post?.text?.split('|');
+    let roles = (textData && textData[7].split(': ')[1]);
 
     let propsPostTitle = {};
     let propsPostText = {};
-    let propsPostImage = {
-        label: isMoviePosts ? 'Постер фильма' : 'Изображение поста',
-        value: post.image
-    };
+    let propsPostImage = {};
+    let propsMovieYear = {};
+    let propsMovieDirector = {};
+    let propsMovieCountry = {};
+    let propsMovieGenre = {};
+    let propsMovieActors = {};
+    let propsMovieKP = {};
+    let propsMovieIMDb = {};
+
     propsPostTitle.label = isMoviePosts ? 'Название фильма' : 'Заголовок поста';
     propsPostTitle.required = true;
-    propsPostTitle.value = post.title;
+    propsPostTitle.defaultValue = post.title;
+    console.log(post.title);
     if (errors['post-title']) {
         propsPostTitle.error = true;
         propsPostTitle.label = 'Ошибка'
         propsPostTitle.helperText = "Поле обязательно для заполнения."
     }
-    propsPostText.label = isMoviePosts ? 'Описание фильма' : 'Текст поста';
-    propsPostText.required = true;
-    propsPostText.value = isMoviePosts ? text_data[0] : post.text;
-    if (errors['post-text']) {
-        propsPostText.error = true;
-        propsPostText.label = 'Ошибка'
-        propsPostText.helperText = "Поле обязательно для заполнения."
-    }
 
-    let propsMovieYear = {
-        label: 'Год выпуска',
-        value: text_data[1].split(': ')[1]
-    }
 
-    let propsMovieDirector = {
-        label: 'Режиссер',
-        value: text_data[2].split(': ')[1]
-    }
+    propsPostImage.label = isMoviePosts ? 'Постер фильма' : 'Изображение поста';
+    propsPostImage.defaultValue = post.image;
 
-    let propsMovieCountry = {
-        label: 'Страна',
-        value: text_data[3].split(': ')[1]
-    }
+    useEffect(() => {
 
-    let propsMovieGenre = {
-        label: 'Жанр',
-        value: text_data[4].split(': ')[1]
-    }
 
-    let propsMovieActors = {
-        label: 'Актеры',
-        value: roles
-    }
 
-    let propsMovieKP = {
-        label: 'Рейтинг КиноПоиск',
-        type: 'number',
-        value: +text_data[5].split(': ')[1]
-    }
 
-    let propsMovieIMDb = {
-        label: 'Рейтинг IMDb',
-        type: 'number',
-        value: +text_data[6].split(': ')[1]
-    }
+        propsPostText.label = isMoviePosts ? 'Описание фильма' : 'Текст поста';
+        propsPostText.required = true;
+        propsPostText.value = isMoviePosts ? textData[0] : post.text;
+        if (errors['post-text']) {
+            propsPostText.error = true;
+            propsPostText.label = 'Ошибка'
+            propsPostText.helperText = "Поле обязательно для заполнения."
+        }
+
+        propsMovieYear.label = 'Год выпуска';
+        propsMovieYear.value = textData[1].split(': ')[1];
+
+        propsMovieDirector.label = 'Режиссер';
+        propsMovieDirector.value = textData[2].split(': ')[1];
+
+        propsMovieCountry.label = 'Страна';
+        propsMovieCountry.value = textData[3].split(': ')[1];
+
+        propsMovieGenre.label = 'Жанр';
+        propsMovieGenre.value = textData[4].split(': ')[1];
+
+        propsMovieActors.label = 'Актеры';
+        propsMovieActors.value = roles;
+
+
+        propsMovieKP.label = 'Рейтинг КиноПоиск';
+        propsMovieKP.type = 'number';
+        propsMovieKP.value = +textData[5].split(': ')[1];
+
+        propsMovieIMDb.abel = 'Рейтинг IMDb';
+        propsMovieIMDb.type = 'number';
+        propsMovieIMDb.value = +textData[6].split(': ')[1];
+
+    }, []);
+
 
     function onSwitchChange(event) {
         let checked = event.target.checked ? true : false;
@@ -96,7 +100,7 @@ export function FormEditPost({ onSubmit }) {
 
     const [open, setOpen] = useState(false);
     const [options, setOptions] = useState([]);
-    const [val, setVal] = useState([]);
+    const [val, setVal] = useState([...post.tags]);
     const loading = open && options.length === 0;
 
     useEffect(() => {
@@ -162,7 +166,7 @@ export function FormEditPost({ onSubmit }) {
                                 fullWidth
                             />
                         )}
-                        defaultValue=''
+
                     />
                 </div>
                 <div className={styles.row}>
@@ -341,6 +345,9 @@ export function FormEditPost({ onSubmit }) {
                                             setOpen(false);
                                         }}
                                         onChange={(event, item) => {
+                                            setVal([
+                                                ...item.filter((option) => post.tags.indexOf(option) === -1),
+                                            ]);
                                             onChange(item);
                                         }}
                                         getOptionLabel={(option) => option}
@@ -372,7 +379,7 @@ export function FormEditPost({ onSubmit }) {
                     </div>
                 }
                 <div className={styles.row}>
-                    <FormButton type='submit' action={null}>Отправить</FormButton>
+                    <FormButton type='submit'>Отправить</FormButton>
                 </div>
             </Form>
 
