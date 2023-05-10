@@ -90,3 +90,15 @@
 .h1 {
     max-width: 500px;
 }
+
+.tags_list {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.tag_item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}

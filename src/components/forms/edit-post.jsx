@@ -31,59 +31,58 @@ export function FormEditPost({ onSubmit }) {
     let propsMovieKP = {};
     let propsMovieIMDb = {};
 
-    propsPostTitle.label = isMoviePosts ? 'Название фильма' : 'Заголовок поста';
-    propsPostTitle.required = true;
-    propsPostTitle.defaultValue = post.title;
-    console.log(post.title);
-    if (errors['post-title']) {
-        propsPostTitle.error = true;
-        propsPostTitle.label = 'Ошибка'
-        propsPostTitle.helperText = "Поле обязательно для заполнения."
-    }
+    console.log(errors);
 
 
-    propsPostImage.label = isMoviePosts ? 'Постер фильма' : 'Изображение поста';
-    propsPostImage.defaultValue = post.image;
-
-    useEffect(() => {
 
 
+    //useEffect(() => {
+
+        propsPostTitle.label = isMoviePosts ? 'Название фильма' : 'Заголовок поста';
+        propsPostTitle.required = true;
+        if (errors['title']) {
+            propsPostTitle.error = true;
+            propsPostTitle.label = 'Ошибка'
+            propsPostTitle.helperText = "Поле обязательно для заполнения."
+        }
+
+        propsPostImage.label = isMoviePosts ? 'Постер фильма' : 'Изображение поста';
 
 
         propsPostText.label = isMoviePosts ? 'Описание фильма' : 'Текст поста';
         propsPostText.required = true;
-        propsPostText.value = isMoviePosts ? textData[0] : post.text;
-        if (errors['post-text']) {
+        //propsPostText.value = isMoviePosts ? textData[0] : post.text;
+        if (errors['text']) {
             propsPostText.error = true;
             propsPostText.label = 'Ошибка'
             propsPostText.helperText = "Поле обязательно для заполнения."
         }
 
         propsMovieYear.label = 'Год выпуска';
-        propsMovieYear.value = textData[1].split(': ')[1];
+        //propsMovieYear.value = textData[1].split(': ')[1];
 
         propsMovieDirector.label = 'Режиссер';
-        propsMovieDirector.value = textData[2].split(': ')[1];
+        //propsMovieDirector.value = textData[2].split(': ')[1];
 
         propsMovieCountry.label = 'Страна';
-        propsMovieCountry.value = textData[3].split(': ')[1];
+        //propsMovieCountry.value = textData[3].split(': ')[1];
 
         propsMovieGenre.label = 'Жанр';
-        propsMovieGenre.value = textData[4].split(': ')[1];
+        //propsMovieGenre.value = textData[4].split(': ')[1];
 
         propsMovieActors.label = 'Актеры';
-        propsMovieActors.value = roles;
+        //propsMovieActors.value = roles;
 
 
         propsMovieKP.label = 'Рейтинг КиноПоиск';
         propsMovieKP.type = 'number';
-        propsMovieKP.value = +textData[5].split(': ')[1];
+        //propsMovieKP.value = +textData[5].split(': ')[1];
 
-        propsMovieIMDb.abel = 'Рейтинг IMDb';
+        propsMovieIMDb.label = 'Рейтинг IMDb';
         propsMovieIMDb.type = 'number';
-        propsMovieIMDb.value = +textData[6].split(': ')[1];
+        //propsMovieIMDb.value = +textData[6].split(': ')[1];
 
-    }, []);
+    //}, []);
 
 
     function onSwitchChange(event) {
@@ -111,7 +110,7 @@ export function FormEditPost({ onSubmit }) {
         }
 
         (async () => {
-            await sleep(1e3); // For demo purposes.
+            await sleep(100);
 
             if (active) {
                 setOptions([...genres]);
@@ -157,6 +156,7 @@ export function FormEditPost({ onSubmit }) {
                         rules={{
                             required: { value: true, message: "Обязательно" }
                         }}
+                        defaultValue={post.title}
                         render={({ field }) => (
                             <TextField
                                 {...field}
@@ -176,6 +176,7 @@ export function FormEditPost({ onSubmit }) {
                         rules={{
                             required: { value: true, message: "Обязательно" }
                         }}
+                        defaultValue={isMoviePosts ? textData[0] : post.text}
                         render={({ field }) => (
                             <TextField
                                 {...field}
@@ -186,7 +187,6 @@ export function FormEditPost({ onSubmit }) {
                                 rows={4}
                             />
                         )}
-                        defaultValue=''
                     />
                 </div>
                 <div className={styles.row}>
@@ -203,7 +203,7 @@ export function FormEditPost({ onSubmit }) {
                                 fullWidth
                             />
                         )}
-                        defaultValue=''
+                        defaultValue={post.image}
                     />
                 </div>
                 {isMoviePosts &&
@@ -221,7 +221,7 @@ export function FormEditPost({ onSubmit }) {
                                         fullWidth
                                     />
                                 )}
-                                defaultValue=''
+                                defaultValue={textData[1].split(': ')[1]}
                             />
                         </div>
                         <div className={styles.row}>
@@ -237,7 +237,7 @@ export function FormEditPost({ onSubmit }) {
                                         fullWidth
                                     />
                                 )}
-                                defaultValue=''
+                                defaultValue={textData[2].split(': ')[1]}
                             />
                         </div>
                         <div className={styles.row}>
@@ -253,7 +253,7 @@ export function FormEditPost({ onSubmit }) {
                                         fullWidth
                                     />
                                 )}
-                                defaultValue=''
+                                defaultValue={textData[3].split(': ')[1]}
                             />
                         </div>
                         <div className={styles.row}>
@@ -269,7 +269,7 @@ export function FormEditPost({ onSubmit }) {
                                         fullWidth
                                     />
                                 )}
-                                defaultValue=''
+                                defaultValue={textData[4].split(': ')[1]}
                             />
                         </div>
                         <div className={styles.row}>
@@ -289,7 +289,7 @@ export function FormEditPost({ onSubmit }) {
                                         }}
                                     />
                                 )}
-                                defaultValue='5.00'
+                                defaultValue={+textData[5].split(': ')[1]}
 
                             />
                         </div>
@@ -310,7 +310,7 @@ export function FormEditPost({ onSubmit }) {
                                         }}
                                     />
                                 )}
-                                defaultValue='5.00'
+                                defaultValue={+textData[6].split(': ')[1]}
                             />
                         </div>
                         <div className={styles.row}>
@@ -326,7 +326,7 @@ export function FormEditPost({ onSubmit }) {
                                         fullWidth
                                     />
                                 )}
-                                defaultValue=''
+                                defaultValue={roles}
                             />
                         </div>
                         <div className={styles.row}>
@@ -338,6 +338,7 @@ export function FormEditPost({ onSubmit }) {
                                         id="tags"
                                         multiple
                                         open={open}
+                                        value={val}
                                         onOpen={() => {
                                             setOpen(true);
                                         }}
@@ -346,14 +347,14 @@ export function FormEditPost({ onSubmit }) {
                                         }}
                                         onChange={(event, item) => {
                                             setVal([
+                                                ...val,
                                                 ...item.filter((option) => post.tags.indexOf(option) === -1),
                                             ]);
-                                            onChange(item);
+                                            //onChange(item);
                                         }}
                                         getOptionLabel={(option) => option}
                                         options={options}
                                         loading={loading}
-                                        value={val}
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}

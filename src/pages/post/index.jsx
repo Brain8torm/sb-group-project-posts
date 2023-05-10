@@ -27,7 +27,7 @@ export function SinglePostPage() {
     const location = useLocation();
     const { setQuickActions } = useContext(ActionsContext);
 
-
+    console.log('post', post);
 
     function FireIcon(props) {
         return (

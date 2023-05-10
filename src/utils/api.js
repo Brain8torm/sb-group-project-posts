@@ -89,6 +89,14 @@ class Api {
         }).then(this.#onResponse);
     }
 
+    editPost(posID, postData) {
+        return fetch(this.#getApiUrl(`/posts/${posID}`), {
+            headers: this.#headers,
+            method: 'PATCH',
+            body: JSON.stringify(postData),
+        }).then(this.#onResponse);
+    }
+
     register(data) {
         return fetch(this.#getApiUrl(`/signup`), {
             method: 'POST',

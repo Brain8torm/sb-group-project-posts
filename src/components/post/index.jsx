@@ -3,11 +3,14 @@ import styles from './post.module.css';
 import classNames from 'classnames';
 import { isLiked } from '../../utils/posts';
 import dayjs from 'dayjs';
+import TagOutlinedIcon from '@mui/icons-material/TagOutlined';
 
 
-export function Post({ _id, title, text, image, likes, postComments, currentUser, onPostLike }) {
+export function Post({ _id, title, text, image, likes, tags, postComments, currentUser, onPostLike }) {
     let text_data = text?.split('|');
     let roles = (text_data && text_data[7].split(': ')[1].split(', '));
+
+    console.log('tags', tags);
 
 
     function stringToColor(string) {
@@ -135,6 +138,15 @@ export function Post({ _id, title, text, image, likes, postComments, currentUser
                                     <div className={styles.description}>
                                         {text_data[0]}
                                     </div>
+
+                                   
+                                        <div className={styles.tags_list}>
+                                            {tags.map((tag, index) => (
+                                            <div className={styles.tag_item}><TagOutlinedIcon/> {tag}</div>
+                                        ))}
+                                        </div>
+                                    
+
                                 </div>
                             }
                         </div>

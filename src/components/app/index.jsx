@@ -23,6 +23,8 @@ import { EditPostPage } from '../../pages/edit-post';
 import { FormEditPost } from '../forms/edit-post';
 import { ActionsContext } from '../../contexts/actions-context';
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@mui/material';
+import { diff } from '../../utils/common';
+import { getLocalData } from '../../utils/localStorage';
 
 export function App() {
     const [posts, setPosts] = useState([]);
@@ -118,6 +120,7 @@ export function App() {
             title: '',
             text: '',
             image: '',
+            tags: []
         };
 
         Object.keys(dataForm).find((a) => {
@@ -143,17 +146,66 @@ export function App() {
         postData.title = dataForm.title;
         postData.text = dataForm.text + '|' + movieData.join('|');
         postData.image = dataForm.image;
+        postData.tags = dataForm.tags;
 
         api.addPost(postData)
             .then(() => {
                 setNotifyStatus({ status: 'success', msg: 'Пост добавлен' });
             })
             .catch((err) => console.log(err));
-        //console.log(dataForm);
+        console.log(dataForm);
     };
 
     const cbSubmitFormEditPost = (dataForm) => {
-        console.log('cbSubmitFormEditPost', dataForm);
+
+        let currentPost = getLocalData('currentPost');
+
+        let movieData = [];
+        let postData = {
+          title: "",
+          text: "",
+          image: "",
+          tags: []
+        };
+        
+        Object.keys(dataForm).find((a) => {
+          if (a.includes("movie")) {
+            if (a === "movie-year") {
+              movieData.push(`Год: ${dataForm[a]}`);
+            } else if (a === "movie-director") {
+              movieData.push(`Режиссер: ${dataForm[a]}`);
+            } else if (a === "movie-country") {
+              movieData.push(`Страна: ${dataForm[a]}`);
+            } else if (a === "movie-genre") {
+              movieData.push(`Жанр: ${dataForm[a]}`);
+            } else if (a === "movie-kp") {
+              movieData.push(`КП: ${dataForm[a]}`);
+            } else if (a === "movie-imdb") {
+              movieData.push(`IMDb: ${dataForm[a]}`);
+            } else if (a === "movie-actors") {
+              movieData.push(`В ролях: ${dataForm[a]}`);
+            }
+          }
+        });
+        
+        postData.title = dataForm.title;
+        postData.text = dataForm.text + "|" + movieData.join("|");
+        postData.image = dataForm.image;
+        postData.tags = dataForm.tags;
+        
+        console.log('postData', postData)
+        
+        const diff = Object.entries(postData).reduce((acc, [key, value]) => {
+            if (
+                !Object.values(postData).includes(value) ||
+                !Object.values(currentPost).includes(value)
+            )
+                acc[key] = value
+        
+            return acc
+        }, {});
+
+        api.editPost(currentPost._id, diff);
     }
 
 
