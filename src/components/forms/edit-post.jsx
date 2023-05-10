@@ -31,7 +31,7 @@ export function FormEditPost({ onSubmit }) {
     let propsMovieKP = {};
     let propsMovieIMDb = {};
 
-    console.log(errors);
+    //console.log(errors);
 
 
 
@@ -346,11 +346,14 @@ export function FormEditPost({ onSubmit }) {
                                             setOpen(false);
                                         }}
                                         onChange={(event, item) => {
+                                            console.log('item', item);
+                                            console.log('val', val);
+                                            console.log('filter', item.filter((option) => post.tags.indexOf(option) === -1));
                                             setVal([
-                                                ...val,
-                                                ...item.filter((option) => post.tags.indexOf(option) === -1),
+                                                ...item,
+                                                //...item.filter((option) => post.tags.indexOf(option) === -1),
                                             ]);
-                                            //onChange(item);
+                                            onChange(item);
                                         }}
                                         getOptionLabel={(option) => option}
                                         options={options}

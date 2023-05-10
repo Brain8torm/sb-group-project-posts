@@ -10,7 +10,7 @@ export function Post({ _id, title, text, image, likes, tags, postComments, curre
     let text_data = text?.split('|');
     let roles = (text_data && text_data[7].split(': ')[1].split(', '));
 
-    console.log('tags', tags);
+    //console.log('tags', tags);
 
 
     function stringToColor(string) {
@@ -142,7 +142,7 @@ export function Post({ _id, title, text, image, likes, tags, postComments, curre
                                    
                                         <div className={styles.tags_list}>
                                             {tags.map((tag, index) => (
-                                            <div className={styles.tag_item}><TagOutlinedIcon/> {tag}</div>
+                                            <div className={styles.tag_item} key={index}><TagOutlinedIcon/> {tag}</div>
                                         ))}
                                         </div>
                                     
