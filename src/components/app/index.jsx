@@ -33,8 +33,8 @@ export function App() {
     const [notifyStatus, setNotifyStatus] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [quickActions, setQuickActions] = useState([]);
+    const [updatedPost, setUpdatedPost] = useState(null);
 
-    console.log('quickActions', quickActions);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -151,9 +151,12 @@ export function App() {
         api.addPost(postData)
             .then(() => {
                 setNotifyStatus({ status: 'success', msg: 'Пост добавлен' });
+                setTimeout(() => {
+                    navigate(initialPath || '/', { replace: true });
+                }, 500);
             })
             .catch((err) => console.log(err));
-        console.log(dataForm);
+
     };
 
     const cbSubmitFormEditPost = (dataForm) => {
@@ -193,7 +196,6 @@ export function App() {
         postData.image = dataForm.image;
         postData.tags = dataForm.tags;
         
-        console.log('postData', postData)
         
         const diff = Object.entries(postData).reduce((acc, [key, value]) => {
             if (
@@ -205,7 +207,14 @@ export function App() {
             return acc
         }, {});
 
-        api.editPost(currentPost._id, diff);
+        api.editPost(currentPost._id, diff).then((editedPost) => {
+            setNotifyStatus({ status: 'success', msg: 'Пост изменен' });
+            setUpdatedPost(editedPost);
+            setTimeout(() => {
+                navigate(initialPath || '/', { replace: true });
+            }, 500);
+            
+        });
     }
 
 
@@ -284,7 +293,7 @@ export function App() {
                                 />
                                 <Route
                                     path='/post/:postID'
-                                    element={<SinglePostPage />} />
+                                    element={<SinglePostPage updatedPost={updatedPost} />} />
                                 <Route path="/profile" element={<ProfilePage />} />
                                 <Route
                                     path='/add-post'

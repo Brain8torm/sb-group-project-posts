@@ -17,7 +17,7 @@ import { Link } from 'react-router-dom';
 import { setLocalData } from '../../utils/localStorage';
 
 
-export function SinglePostPage() {
+export function SinglePostPage({ updatedPost }) {
     const { postID } = useParams();
     const [post, setPost] = useState(null);
     const [currentUser, setCurrentUser] = useState(null);
@@ -27,6 +27,10 @@ export function SinglePostPage() {
     const location = useLocation();
     const { setQuickActions } = useContext(ActionsContext);
 
+    useEffect(() => {
+        setPost(updatedPost);
+        setLocalData('currentPost', updatedPost);
+    }, [updatedPost]);
 
     function FireIcon(props) {
         return (
