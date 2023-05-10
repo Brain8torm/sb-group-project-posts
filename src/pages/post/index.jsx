@@ -28,7 +28,6 @@ export function SinglePostPage() {
     const { setQuickActions } = useContext(ActionsContext);
 
 
-
     function FireIcon(props) {
         return (
             <SvgIcon {...props}>
