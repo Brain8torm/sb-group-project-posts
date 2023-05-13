@@ -50,7 +50,7 @@ export function Header({ isLoading }) {
                         {isLoading ? (
                             <Skeleton sx={{ height: 36 }} animation="wave" variant="rectangular" />
                         ) : (
-                            <B8Logo altText="LOGO" link="/" />
+                            <B8Logo altText="LOGO" link="./" />
                         )}
                         <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                             <Link
