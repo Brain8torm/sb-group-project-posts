@@ -14,7 +14,7 @@ import { UserContext } from '../../contexts/current-user-context';
 import { PostsContext } from '../../contexts/posts-context';
 import { NotifyContext } from '../../contexts/notify-context';
 import B8Notify from '../notify';
-import { FormAddPost } from '../forms';
+import { FormAddPost, FormChangeAvatar } from '../forms';
 import { B8Modal } from '../modal';
 import { Login } from '../login';
 import { Register } from '../register';
@@ -26,6 +26,7 @@ import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@mui/material';
 import { getLocalData } from '../../utils/localStorage';
 import { FormAddReview } from '../forms/add-review';
 import { AddReviewPage } from '../../pages/add-review';
+import { FormEditProfile } from '../forms/edit-profile';
 
 export function App() {
     const [posts, setPosts] = useState([]);
@@ -232,6 +233,24 @@ export function App() {
         });
     }
 
+    const cbSubmitFormChangeAvatar = (dataForm) => {
+        api.changeUserAvatar(dataForm).then((userData) => {
+            setCurrentUser(userData);
+            setTimeout(() => {
+                navigate(initialPath || '/', { replace: true });
+            }, 500);
+        });
+    };
+
+    const cbSubmitFormEditProfile = (dataForm) => {
+        api.setUserInfo(dataForm).then((userData) => {
+            setCurrentUser(userData);
+            setTimeout(() => {
+                navigate(initialPath || '/', { replace: true });
+            }, 500);
+        })
+    };
+
 
     const cbSubmitFormLoginRegister = (dataForm) => {
         console.log('cbSubmitFormLoginRegister', dataForm);
@@ -334,6 +353,15 @@ export function App() {
                                         onSubmit={cbSubmitFormLoginRegister}
                                         onNavigateLogin={handleClickButtonLoginNotModal} />} />
                                 <Route path='/reset-password' element={123} />
+                                <Route path='/change-avatar' element={
+                                    <FormChangeAvatar />
+                                } />
+                                <Route path='/edit-profile' element={
+                                    <FormEditProfile
+                                        onSubmit={cbSubmitFormEditProfile}
+                                    />
+                                } />
+
                                 <Route path="*" element={<NotFoundPage />} />
                             </Routes>
                         </main>
@@ -407,6 +435,20 @@ export function App() {
                                     }
                                 />
                                 <Route path="/reset-password" element={<B8Modal isOpen>123</B8Modal>} />
+                                <Route
+                                    path='/change-avatar'
+                                    element={
+                                        <B8Modal isOpen onClose={onCloseRoutingModal}>
+                                            <FormChangeAvatar onSubmit={cbSubmitFormChangeAvatar} />
+                                        </B8Modal>
+                                    } />
+                                <Route
+                                    path='/edit-profile'
+                                    element={
+                                        <B8Modal isOpen onClose={onCloseRoutingModal}>
+                                            <FormEditProfile onSubmit={cbSubmitFormEditProfile} />
+                                        </B8Modal>
+                                    } />
                             </Routes>
                         )}
                     </UserContext.Provider>

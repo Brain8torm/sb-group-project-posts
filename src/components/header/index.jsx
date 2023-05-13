@@ -12,11 +12,10 @@ import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
 import styles from './header.module.css';
 import { B8Logo } from '../logo';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useContext } from 'react';
 import { UserContext } from '../../contexts/current-user-context';
 import { Skeleton } from '@mui/material';
-import classNames from 'classnames';
 
 export function Header({ isLoading }) {
     const settings = ['Профиль', 'Выход'];
@@ -26,10 +25,7 @@ export function Header({ isLoading }) {
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
 
-    const navigate = useNavigate();
     const location = useLocation();
-    const backgroundLocation = location.state?.backgroundLocation;
-    const initialPath = location.state?.initialPath;
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
