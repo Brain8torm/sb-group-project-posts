@@ -69,7 +69,6 @@ class Api {
     getInfoPost(postID) {
         return Promise.all([
             this.getPostById(postID),
-            this.getUserInfo(),
             this.getPostComments(postID),
         ]);
     }
@@ -93,6 +92,14 @@ class Api {
         return fetch(this.#getApiUrl(`/posts/${posID}`), {
             headers: this.#headers,
             method: 'PATCH',
+            body: JSON.stringify(postData),
+        }).then(this.#onResponse);
+    }
+
+    addReview(postID, postData) {
+        return fetch(this.#getApiUrl(`/posts/comments/${postID}`), {
+            headers: this.#headers,
+            method: 'POST',
             body: JSON.stringify(postData),
         }).then(this.#onResponse);
     }

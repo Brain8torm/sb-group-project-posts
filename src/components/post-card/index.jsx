@@ -52,7 +52,7 @@ export function PostCard({ _id, title, text, author, image, created_at, likes })
     }
 
     return (
-        <Card sx={{ maxWidth: 345 }} className={classNames(styles.item)} data-id={_id}>
+        <Card sx={{ maxWidth: 400 }} className={classNames(styles.item)} data-id={_id}>
             <div className={classNames(styles.wrapper)}>
                 <CloseIcon
                     className={classNames(styles.remove_icon)}
@@ -61,12 +61,14 @@ export function PostCard({ _id, title, text, author, image, created_at, likes })
                 {isLoading
                     ? <Skeleton sx={{ height: 390 }} animation="wave" variant="rectangular" />
                     :
+                    <Link to={`/post/${_id}`} className="post__link">
                     <CardMedia
                         component="img"
-                        image={image && image}
+                        image={image ? image : './images/post-default.svg'}
                         alt=""
                         className={classNames(styles.media)}
                     />
+                    </Link>
                 }
                 <Link to={`/post/${_id}`} className="post__link">
                     <CardHeader title={title}></CardHeader>
