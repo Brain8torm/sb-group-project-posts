@@ -39,11 +39,11 @@ class Api {
         }).then(this.#onResponse);
     }
 
-    setUserInfo({ name, about }) {
+    setUserInfo(postData) {
         return fetch(this.#getApiUrl('/users/me'), {
             method: 'PATCH',
             headers: this.#headers,
-            body: JSON.stringify({ name, about }),
+            body: JSON.stringify(postData),
         }).then(this.#onResponse);
     }
 
@@ -123,6 +123,14 @@ class Api {
     checkToken(token) {
         return fetch(this.#getApiUrl(`/users/me`), {
             headers: { ...this.#headers, authorization: `Bearer ${token}` },
+        }).then(this.#onResponse);
+    }
+
+    changeUserAvatar(data) {
+        return fetch(this.#getApiUrl(`/users/me/avatar`), {
+            method: 'PATCH',
+            headers: this.#headers,
+            body: JSON.stringify(data),
         }).then(this.#onResponse);
     }
 }
