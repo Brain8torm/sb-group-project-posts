@@ -1,7 +1,6 @@
 import { Avatar, Grid, IconButton, List, ListItem, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import { Container } from '@mui/system';
 import { useContext } from 'react';
-import { UserContext } from '../../contexts/current-user-context';
 import { PostsContext } from '../../contexts/posts-context';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
@@ -9,25 +8,12 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
+import { useSelector } from 'react-redux';
 
 
 export function ProfilePage() {
     const { posts } = useContext(PostsContext);
-    const { currentUser } = useContext(UserContext);
-
-
-    const cols = [
-        { field: 'id', headerName: 'ID', width: 40 },
-        { field: 'isPublished', type: 'boolean', editable: true, headerName: 'Public', width: 100 },
-        { field: 'title', headerName: 'Title', width: 250 },
-        { field: 'created_at', headerName: 'Created', width: 130 },
-        { field: 'updated_at', headerName: 'Updated', width: 130 }
-    ]
-    let rows = [];
-    posts.map((item, index) => {
-        let rowItem = { id: index + 1, isPublished: item.isPublished, title: item.title, created_at: item.created_at, updated_at: item.updated_at }
-        rows.push(rowItem);
-    });
+    const currentUser = useSelector(state => state.user.data);
 
     return (
         <Container maxWidth="lg">
@@ -51,6 +37,7 @@ export function ProfilePage() {
                                 (item.author._id === currentUser._id)
                                 && <ListItem secondaryAction={
                                     <>
+                                    
                                             <IconButton edge="end" aria-label="delete" sx={{ mr: .5 }}>
                                             <EditOutlinedIcon />
                                         </IconButton>

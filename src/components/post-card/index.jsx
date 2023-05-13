@@ -6,14 +6,14 @@ import 'dayjs/locale/ru';
 import { isLiked } from '../../utils/posts';
 import { Link } from 'react-router-dom';
 import { PostsContext } from '../../contexts/posts-context';
-import { UserContext } from '../../contexts/current-user-context';
 import { useContext } from 'react';
+import { useSelector } from 'react-redux';
 
 
 export function PostCard({ _id, title, text, author, image, created_at, likes }) {
 
     const { isLoading, onPostLike, onPostDelete } = useContext(PostsContext);
-    const { currentUser } = useContext(UserContext);
+    const currentUser = useSelector(state => state.user.data);
 
     const like = isLiked(likes, currentUser?._id);
 

@@ -7,7 +7,7 @@ import { PostAlt } from '../../components/post-alt';
 import { isLiked } from '../../utils/posts';
 import { NotifyContext } from '../../contexts/notify-context';
 import { setLocalData } from '../../utils/localStorage';
-import { UserContext } from '../../contexts/current-user-context';
+import { useSelector } from 'react-redux';
 
 
 export function SinglePostPage({ updatedPost, handlePostDelete }) {
@@ -16,7 +16,7 @@ export function SinglePostPage({ updatedPost, handlePostDelete }) {
     const [errorState, setErrorState] = useState(null);
     const { setNotifyStatus } = useContext(NotifyContext);
     const [postComments, setPostComments] = useState(null);
-    const { currentUser } = useContext(UserContext);
+    const currentUser = useSelector(state => state.user.data);
 
     useEffect(() => {
         setPost(updatedPost);
@@ -25,7 +25,6 @@ export function SinglePostPage({ updatedPost, handlePostDelete }) {
 
 
     const handlePostRemove = (postId) => {
-        console.log(postId)
         if (postId === currentUser._id) {
             handlePostDelete(postId);
         }

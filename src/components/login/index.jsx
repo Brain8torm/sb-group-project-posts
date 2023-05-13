@@ -69,8 +69,8 @@ export function Login({ onSubmit, onNavigateRegister, onNavigateReset }) {
                                 message: 'Поле обязательно для заполнения'
                             },
                             pattern: {
-                                value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
-                                message: "Пароль должен содержать минимум восемь символов, одну букву латинского алфавита и одну цифру."
+                                value: /^(?=.*[0-9])(?=.*\d)[0-9\d]{8,}$/,
+                                message: "Пароль должен содержать минимум восемь символов."
                             }
                         }}
                         defaultValue=''

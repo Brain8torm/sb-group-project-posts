@@ -10,7 +10,6 @@ import { SinglePostPage } from '../../pages/post';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { NotFoundPage } from '../../pages/not-found';
 import { ProfilePage } from '../../pages/profile';
-import { UserContext } from '../../contexts/current-user-context';
 import { PostsContext } from '../../contexts/posts-context';
 import { NotifyContext } from '../../contexts/notify-context';
 import B8Notify from '../notify';
@@ -26,22 +25,30 @@ import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@mui/material';
 import { getLocalData } from '../../utils/localStorage';
 import { FormAddReview } from '../forms/add-review';
 import { AddReviewPage } from '../../pages/add-review';
+import { ProtectedRoute } from '../protected-route';
+import { useDispatch, useSelector } from 'react-redux';
+import { checkTokenUser, loginUser } from '../../storage/user-slice';
+import { LoginPage } from '../../pages/login';
 
 export function App() {
     const [posts, setPosts] = useState([]);
     const [allPosts, setAllPosts] = useState([]);
-    const [currentUser, setCurrentUser] = useState(null);
+    const currentUser = useSelector(state => state.user.data)
     const [notifyStatus, setNotifyStatus] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [quickActions, setQuickActions] = useState([]);
     const [updatedPost, setUpdatedPost] = useState(null);
 
 
+    const token = getLocalData('token');
+
     const navigate = useNavigate();
     const location = useLocation();
 
     const backgroundLocation = location.state?.backgroundLocation;
     const initialPath = location.state?.initialPath;
+
+    const dispatch = useDispatch();
 
     function handlePostLike(post) {
         const like = isLiked(post.likes, currentUser._id);
@@ -96,9 +103,8 @@ export function App() {
 
     useEffect(() => {
         setIsLoading(true);
-        api.getAllInfo()
-            .then(([postsData, userInfoData]) => {
-                setCurrentUser(userInfoData);
+        api.getPostsList()
+            .then((postsData) => {
                 setAllPosts(postsData);
             })
             .catch((err) => console.log(err))
@@ -110,10 +116,20 @@ export function App() {
 
     useEffect(() => {
         const myPosts = allPosts?.filter((post) => {
-            return post.author._id === currentUser._id;
+            return post.author._id === currentUser?._id;
         });
         setPosts(myPosts);
     }, [allPosts]);
+
+    /*useEffect(() => {
+        dispatch(checkTokenUser(token))
+            .then(() => {
+                if (token) {
+                    console.log(currentUser);
+                }
+            })
+    }, [dispatch, token]);*/
+
 
     const cbSubmitFormAddPost = (dataForm) => {
         let movieData = [];
@@ -222,7 +238,7 @@ export function App() {
 
     const cbSubmitFormAddReview = (dataForm) => {
         let currentPost = getLocalData('currentPost');
-        console.log('cbSubmitFormAddReview', dataForm);
+
         api.addReview(currentPost?._id, dataForm).then((ReviewedPost) => {
             setNotifyStatus({ status: 'success', msg: 'Отзыв добавлен' });
             setUpdatedPost(ReviewedPost);
@@ -237,7 +253,8 @@ export function App() {
         console.log('cbSubmitFormLoginRegister', dataForm);
     }
     const cbSubmitFormLogin = (dataForm) => {
-        console.log('cbSubmitFormLogin', dataForm);
+        dispatch(loginUser(dataForm));
+        navigate('/');
     }
     const cbSubmitFormResetPassword = (dataForm) => {
         console.log('cbSubmitFormResetPassword', dataForm);
@@ -253,7 +270,7 @@ export function App() {
     }
     const handleClickButtonRegister = (e) => {
         e.preventDefault();
-        console.log('register click');
+
         navigate('/register', { replace: true, state: { backgroundLocation: { ...location, state: null }, initialPath } })
     }
     const handleClickButtonResetNotModal = (e) => {
@@ -284,64 +301,101 @@ export function App() {
             >
                 <ActionsContext.Provider
                     value={{ setQuickActions }}>
-                    <UserContext.Provider value={{ currentUser }}>
-                        <Header currentUser={currentUser} isLoading={isLoading} />
 
-                        <main className={classNames(styles.section_large)}>
-                            <Routes
-                                location={
-                                    (backgroundLocation && {
-                                        ...backgroundLocation,
-                                        pathname: initialPath,
-                                    }) ||
-                                    location
+                    <Header user={currentUser} />
+
+                    <main className={classNames(styles.section_large)}>
+                        <Routes
+                            location={
+                                (backgroundLocation && {
+                                    ...backgroundLocation,
+                                    pathname: initialPath,
+                                }) ||
+                                location
+                            }
+                        >
+                            <Route
+                                path='/'
+                                element={
+                                    <HomePage
+                                        isLoading={isLoading}
+                                        handleSwitchChange={handleSwitchChange}
+                                    />
                                 }
-                            >
-                                <Route
-                                    path='/'
-                                    element={
-                                        <HomePage
-                                            isLoading={isLoading}
-                                            handleSwitchChange={handleSwitchChange}
+                            />
+                            <Route
+                                path='/post/:postID'
+                                element={
+                                    <SinglePostPage
+                                        updatedPost={updatedPost}
+                                        handlePostDelete={handlePostDelete}
+                                    />}
+                            />
+                            <Route path="/profile" element={
+                                <ProtectedRoute>
+                                    <ProfilePage />
+                                </ProtectedRoute>
+                            } />
+                            <Route
+                                path='/add-post'
+                                element={
+                                    <ProtectedRoute>
+                                        <AddPostPage
+                                            handleFormSubmit={cbSubmitFormAddPost}
                                         />
-                                    }
-                                />
-                                <Route
-                                    path='/post/:postID'
-                                    element={<SinglePostPage updatedPost={updatedPost} handlePostDelete={handlePostDelete} />} />
-                                <Route path="/profile" element={<ProfilePage />} />
-                                <Route
-                                    path='/add-post'
-                                    element={<AddPostPage handleFormSubmit={cbSubmitFormAddPost} />}
-                                />
-                                <Route
-                                    path='/edit-post/:postID'
-                                    element={<EditPostPage handleFormSubmit={cbSubmitFormEditPost} />}
-                                />
-                                <Route
-                                    path='/add-review'
-                                    element={<AddReviewPage handleFormSubmit={cbSubmitFormAddReview} />}
-                                />
-                                <Route
-                                    path='/login'
-                                    element={<Login
-                                        onSubmit={cbSubmitFormLogin}
-                                        onNavigateRegister={handleClickButtonRegisterNotModal}
-                                        onNavigateReset={handleClickButtonResetNotModal} />} />
-                                <Route
-                                    path='/register'
-                                    element={<Register
-                                        onSubmit={cbSubmitFormLoginRegister}
-                                        onNavigateLogin={handleClickButtonLoginNotModal} />} />
-                                <Route path='/reset-password' element={123} />
-                                <Route path="*" element={<NotFoundPage />} />
-                            </Routes>
-                        </main>
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path='/edit-post/:postID'
+                                element={
+                                    <ProtectedRoute>
+                                        <EditPostPage
+                                            handleFormSubmit={cbSubmitFormEditPost}
+                                        />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path='/add-review'
+                                element={
+                                    <ProtectedRoute>
+                                        <AddReviewPage
+                                            handleFormSubmit={cbSubmitFormAddReview}
+                                        />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path='/login'
+                                element={
+                                    <ProtectedRoute onlyUnAuth>
+                                        <LoginPage
+                                            onSubmit={cbSubmitFormLogin}
+                                            onNavigateRegister={handleClickButtonRegisterNotModal}
+                                            onNavigateReset={handleClickButtonResetNotModal} />
+                                    </ProtectedRoute>
 
-                        <Footer />
+                                } />
+                            <Route
+                                path='/register'
+                                element={
+                                    <ProtectedRoute onlyUnAuth>
+                                        <Register
+                                            onSubmit={cbSubmitFormLoginRegister}
+                                            onNavigateLogin={handleClickButtonLoginNotModal} />
+                                    </ProtectedRoute>
+                                } />
+                            <Route path='/reset-password' element={123} />
+                            <Route path="*" element={<NotFoundPage />} />
+                        </Routes>
+                    </main>
 
-                        <B8Notify status={notifyStatus?.status} msg={notifyStatus?.msg} />
+                    <Footer />
 
+                    <B8Notify status={notifyStatus?.status} msg={notifyStatus?.msg} />
+
+                    {currentUser &&
                         <SpeedDial
                             ariaLabel="SpeedDial"
                             sx={{ position: 'fixed', bottom: 16, right: 16 }}
@@ -356,60 +410,80 @@ export function App() {
                                 />
                             ))}
                         </SpeedDial>
+                    }
 
-                        {backgroundLocation && (
-                            <Routes>
-                                <Route
-                                    path='/login'
-                                    element={
-                                        <B8Modal isOpen onClose={onCloseRoutingModal}>
+                    {backgroundLocation && (
+                        <Routes>
+                            <Route
+                                path='/login'
+                                element={
+                                    <ProtectedRoute onlyUnAuth>
+                                        <B8Modal isOpen title='Войти на сайт' onClose={onCloseRoutingModal}>
                                             <Login
                                                 onSubmit={cbSubmitFormLogin}
                                                 onNavigateRegister={handleClickButtonRegister}
                                                 onNavigateReset={handleClickButtonReset}
                                             />
                                         </B8Modal>
-                                    }
-                                />
-                                <Route
-                                    path='/register'
-                                    element={
+                                    </ProtectedRoute>
+
+                                }
+                            />
+                            <Route
+                                path='/register'
+                                element={
+                                    <ProtectedRoute onlyUnAuth>
                                         <B8Modal isOpen onClose={onCloseRoutingModal}>
                                             <Register
                                                 onSubmit={cbSubmitFormLoginRegister}
                                                 onNavigateLogin={handleClickButtonLogin}
                                             />
                                         </B8Modal>
-                                    }
-                                />
-                                <Route
-                                    path='/add-post'
-                                    element={
+                                    </ProtectedRoute>
+
+                                }
+                            />
+                            <Route
+                                path='/add-post'
+                                element={
+                                    <ProtectedRoute>
                                         <B8Modal isOpen onClose={onCloseRoutingModal}>
                                             <FormAddPost onSubmit={cbSubmitFormAddPost} />
                                         </B8Modal>
-                                    }
-                                />
-                                <Route
-                                    path='/edit-post/:postID'
-                                    element={
+                                    </ProtectedRoute>
+
+                                }
+                            />
+                            <Route
+                                path='/edit-post/:postID'
+                                element={
+                                    <ProtectedRoute>
                                         <B8Modal isOpen onClose={onCloseRoutingModal}>
                                             <FormEditPost onSubmit={cbSubmitFormEditPost} />
                                         </B8Modal>
-                                    }
-                                />
-                                <Route
-                                    path='/add-review'
-                                    element={
+                                    </ProtectedRoute>
+
+                                }
+                            />
+                            <Route
+                                path='/add-review'
+                                element={
+                                    <ProtectedRoute>
                                         <B8Modal isOpen onClose={onCloseRoutingModal}>
                                             <FormAddReview onSubmit={cbSubmitFormAddReview} />
                                         </B8Modal>
-                                    }
-                                />
-                                <Route path="/reset-password" element={<B8Modal isOpen>123</B8Modal>} />
-                            </Routes>
-                        )}
-                    </UserContext.Provider>
+                                    </ProtectedRoute>
+
+                                }
+                            />
+                            <Route path="/reset-password" element={
+                                <ProtectedRoute onlyUnAuth>
+                                    <B8Modal isOpen>123</B8Modal>
+                                </ProtectedRoute>
+
+                            } />
+                        </Routes>
+                    )}
                 </ActionsContext.Provider>
             </PostsContext.Provider>
         </NotifyContext.Provider>

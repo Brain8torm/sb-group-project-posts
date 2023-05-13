@@ -9,12 +9,16 @@ import '@fontsource/nunito/700.css';
 
 import './index.css';
 import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import store from './storage/store';
 
 const rootElement = document.getElementById('app');
 const root = createRoot(rootElement);
 
 root.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
+    <Provider store={store}>
+        <BrowserRouter>
+            <App />
+        </BrowserRouter>
+    </Provider>
 );
