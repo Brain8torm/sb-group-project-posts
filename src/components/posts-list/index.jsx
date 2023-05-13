@@ -14,7 +14,7 @@ export function PostsList({ type }) {
 
     const handlePageChange = (event, p) => {
         setPage(p);
-        _DATA.jump(p);
+        _DATA?.jump(p);
     };
 
     return (
@@ -23,7 +23,7 @@ export function PostsList({ type }) {
 
             <Grid container spacing={2}>
                 {
-                    _DATA.currentData().map((item, index) => (
+                    _DATA.currentData()?.map((item, index) => (
                         (
                             <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                                 <PostCard {...item} />

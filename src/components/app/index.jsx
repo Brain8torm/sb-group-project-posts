@@ -7,7 +7,7 @@ import { Footer } from '../footer';
 import { HomePage } from '../../pages/home';
 import { isLiked } from '../../utils/posts';
 import { SinglePostPage } from '../../pages/post';
-import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { NotFoundPage } from '../../pages/not-found';
 import { ProfilePage } from '../../pages/profile';
 import { UserContext } from '../../contexts/current-user-context';
@@ -18,13 +18,14 @@ import { FormAddPost } from '../forms';
 import { B8Modal } from '../modal';
 import { Login } from '../login';
 import { Register } from '../register';
-import { AddPostPage } from '../../pages/add-post/inpedx';
+import { AddPostPage } from '../../pages/add-post';
 import { EditPostPage } from '../../pages/edit-post';
 import { FormEditPost } from '../forms/edit-post';
 import { ActionsContext } from '../../contexts/actions-context';
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@mui/material';
-import { diff } from '../../utils/common';
 import { getLocalData } from '../../utils/localStorage';
+import { FormAddReview } from '../forms/add-review';
+import { AddReviewPage } from '../../pages/add-review';
 
 export function App() {
     const [posts, setPosts] = useState([]);
@@ -82,8 +83,8 @@ export function App() {
                 return postState._id !== deletedPost._id;
             });
             setNotifyStatus({ status: 'error', msg: 'Пост удален' });
-
             setPosts(newPosts);
+            navigate('/', { replace: false });
         });
     }
 
@@ -108,7 +109,7 @@ export function App() {
     }, []);
 
     useEffect(() => {
-        const myPosts = allPosts.filter((post) => {
+        const myPosts = allPosts?.filter((post) => {
             return post.author._id === currentUser._id;
         });
         setPosts(myPosts);
@@ -149,8 +150,10 @@ export function App() {
         postData.tags = dataForm.tags;
 
         api.addPost(postData)
-            .then(() => {
+            .then((newPost) => {
                 setNotifyStatus({ status: 'success', msg: 'Пост добавлен' });
+                posts.unshift(newPost)
+                setPosts(posts);
                 setTimeout(() => {
                     navigate(initialPath || '/', { replace: true });
                 }, 500);
@@ -165,45 +168,45 @@ export function App() {
 
         let movieData = [];
         let postData = {
-          title: "",
-          text: "",
-          image: "",
-          tags: []
+            title: "",
+            text: "",
+            image: "",
+            tags: []
         };
-        
+
         Object.keys(dataForm).find((a) => {
-          if (a.includes("movie")) {
-            if (a === "movie-year") {
-              movieData.push(`Год: ${dataForm[a]}`);
-            } else if (a === "movie-director") {
-              movieData.push(`Режиссер: ${dataForm[a]}`);
-            } else if (a === "movie-country") {
-              movieData.push(`Страна: ${dataForm[a]}`);
-            } else if (a === "movie-genre") {
-              movieData.push(`Жанр: ${dataForm[a]}`);
-            } else if (a === "movie-kp") {
-              movieData.push(`КП: ${dataForm[a]}`);
-            } else if (a === "movie-imdb") {
-              movieData.push(`IMDb: ${dataForm[a]}`);
-            } else if (a === "movie-actors") {
-              movieData.push(`В ролях: ${dataForm[a]}`);
+            if (a.includes("movie")) {
+                if (a === "movie-year") {
+                    movieData.push(`Год: ${dataForm[a]}`);
+                } else if (a === "movie-director") {
+                    movieData.push(`Режиссер: ${dataForm[a]}`);
+                } else if (a === "movie-country") {
+                    movieData.push(`Страна: ${dataForm[a]}`);
+                } else if (a === "movie-genre") {
+                    movieData.push(`Жанр: ${dataForm[a]}`);
+                } else if (a === "movie-kp") {
+                    movieData.push(`КП: ${dataForm[a]}`);
+                } else if (a === "movie-imdb") {
+                    movieData.push(`IMDb: ${dataForm[a]}`);
+                } else if (a === "movie-actors") {
+                    movieData.push(`В ролях: ${dataForm[a]}`);
+                }
             }
-          }
         });
-        
+
         postData.title = dataForm.title;
         postData.text = dataForm.text + "|" + movieData.join("|");
         postData.image = dataForm.image;
         postData.tags = dataForm.tags;
-        
-        
+
+
         const diff = Object.entries(postData).reduce((acc, [key, value]) => {
             if (
                 !Object.values(postData).includes(value) ||
                 !Object.values(currentPost).includes(value)
             )
                 acc[key] = value
-        
+
             return acc
         }, {});
 
@@ -213,7 +216,19 @@ export function App() {
             setTimeout(() => {
                 navigate(initialPath || '/', { replace: true });
             }, 500);
-            
+
+        });
+    }
+
+    const cbSubmitFormAddReview = (dataForm) => {
+        let currentPost = getLocalData('currentPost');
+        console.log('cbSubmitFormAddReview', dataForm);
+        api.addReview(currentPost?._id, dataForm).then((ReviewedPost) => {
+            setNotifyStatus({ status: 'success', msg: 'Отзыв добавлен' });
+            setUpdatedPost(ReviewedPost);
+            setTimeout(() => {
+                navigate(initialPath || '/', { replace: true });
+            }, 500);
         });
     }
 
@@ -293,16 +308,20 @@ export function App() {
                                 />
                                 <Route
                                     path='/post/:postID'
-                                    element={<SinglePostPage updatedPost={updatedPost} />} />
+                                    element={<SinglePostPage updatedPost={updatedPost} handlePostDelete={handlePostDelete} />} />
                                 <Route path="/profile" element={<ProfilePage />} />
                                 <Route
                                     path='/add-post'
                                     element={<AddPostPage handleFormSubmit={cbSubmitFormAddPost} />}
-                                ></Route>
+                                />
                                 <Route
                                     path='/edit-post/:postID'
                                     element={<EditPostPage handleFormSubmit={cbSubmitFormEditPost} />}
-                                ></Route>
+                                />
+                                <Route
+                                    path='/add-review'
+                                    element={<AddReviewPage handleFormSubmit={cbSubmitFormAddReview} />}
+                                />
                                 <Route
                                     path='/login'
                                     element={<Login
@@ -376,6 +395,14 @@ export function App() {
                                     element={
                                         <B8Modal isOpen onClose={onCloseRoutingModal}>
                                             <FormEditPost onSubmit={cbSubmitFormEditPost} />
+                                        </B8Modal>
+                                    }
+                                />
+                                <Route
+                                    path='/add-review'
+                                    element={
+                                        <B8Modal isOpen onClose={onCloseRoutingModal}>
+                                            <FormAddReview onSubmit={cbSubmitFormAddReview} />
                                         </B8Modal>
                                     }
                                 />

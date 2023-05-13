@@ -21,14 +21,14 @@ export function FormAddPost({ onSubmit }) {
     };
     propsPostTitle.label = isMoviePosts ? 'Название фильма' : 'Заголовок поста';
     propsPostTitle.required = true;
-    if (errors['post-title']) {
+    if (errors['title']) {
         propsPostTitle.error = true;
         propsPostTitle.label = 'Ошибка'
         propsPostTitle.helperText = "Поле обязательно для заполнения."
     }
     propsPostText.label = isMoviePosts ? 'Описание фильма' : 'Текст поста';
     propsPostText.required = true;
-    if (errors['post-text']) {
+    if (errors['text']) {
         propsPostText.error = true;
         propsPostText.label = 'Ошибка'
         propsPostText.helperText = "Поле обязательно для заполнения."
