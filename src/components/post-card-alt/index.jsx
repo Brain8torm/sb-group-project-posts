@@ -8,18 +8,14 @@ import { Link } from 'react-router-dom';
 import { PostsContext } from '../../contexts/posts-context';
 import { UserContext } from '../../contexts/current-user-context';
 import { useContext } from 'react';
-import GradeOutlinedIcon from '@mui/icons-material/GradeOutlined';
-import { movieCountry, movieYear, movieRatingKP, movieDirector } from '../../utils/movie';
 
 
-export function PostCard({ _id, title, isPublished, author, image, created_at, likes, text }) {
+export function PostCardAlt({ _id, title, isPublished, author, image, created_at, likes }) {
 
     const { isLoading, onPostLike, onPostDelete } = useContext(PostsContext);
     const { currentUser } = useContext(UserContext);
 
     const like = isLiked(likes, currentUser?._id);
-
-    const titleWithYear = `${title} (${movieYear(text)})`;
 
     function FireIcon(props) {
         return (
@@ -66,41 +62,48 @@ export function PostCard({ _id, title, isPublished, author, image, created_at, l
                     ? <Skeleton sx={{ height: 390 }} animation="wave" variant="rectangular" />
                     :
                     <Link to={`/post/${_id}`} className="post__link">
-                        <CardMedia
-                            component="img"
-                            image={image ? image : './images/post-default.svg'}
-                            alt=""
-                            className={classNames(styles.media)}
-                        />
+                    <CardMedia
+                        component="img"
+                        image={image ? image : './images/post-default.svg'}
+                        alt=""
+                        className={classNames(styles.media)}
+                    />
                     </Link>
                 }
-                <Link to={`/post/${_id}`} className={styles.link}>
-                    <CardHeader className={styles.title} title={titleWithYear}></CardHeader>
+                <Link to={`/post/${_id}`} className="post__link">
+                    <CardHeader title={title}></CardHeader>
                 </Link>
-                <div className={classNames(styles.body)}>
-                    <div className={styles.meta}>
-                        <div className={classNames(styles.country)}>
-                            Страна: {movieCountry(text)}
-                        </div>
-                        <div className={classNames(styles.director)}>
-                            Режиссер: {movieDirector(text)}
-                        </div>
+                <CardContent className={classNames(styles.body)}>
+                    <div className={classNames(styles.date)}>
+                        <CalendarIcon
+                            fontSize="small"
+                            className={classNames(styles.date_icon)}
+                        /> {dayjs(created_at).locale('ru').format('D MMMM YYYY')}
                     </div>
-                    <div className={styles.footer}>
-                        <div className={styles.rating}>
-                            <div
-                                className={classNames(styles.rating_kp)}
-                            ><GradeOutlinedIcon /> {movieRatingKP(text)}</div>
-                        </div>
-                        <div
-                            data-like={like}
-                            className={classNames(styles.like, { [styles.like__active]: like })}
-                            style={{ display: 'flex', alignItems: 'center' }}
-                            onClick={handleClickLike}
-                        ><FireIcon /> {likes?.length}</div>
-                    </div>
-                </div>
+                </CardContent>
+                <div className={styles.footer}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        {isLoading
+                            ? <Skeleton animation="wave" variant="circular" width={40} height={40} />
+                            :
+                            <Avatar
+                                aria-label="post"
+                                className={classNames(styles.avatar)}
+                                sx={{ width: 35, height: 35 }}
+                            >R</Avatar>
 
+                        }
+                        <div
+                            className={classNames(styles.author)}
+                        >{author.name}</div>
+                    </div>
+                    <div
+                        data-like={like}
+                        className={classNames(styles.like, { [styles.like__active]: like })}
+                        style={{ display: 'flex', alignItems: 'center' }}
+                        onClick={handleClickLike}
+                    ><FireIcon /> {likes?.length}</div>
+                </div>
             </div>
         </Card>
     );
