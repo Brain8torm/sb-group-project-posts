@@ -3,6 +3,7 @@ import styles from './post.module.css';
 import classNames from 'classnames';
 import { isLiked } from '../../utils/posts';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import TagOutlinedIcon from '@mui/icons-material/TagOutlined';
 import { useContext, useEffect } from 'react';
 import { ActionsContext } from '../../contexts/actions-context';
@@ -11,11 +12,14 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import InsertCommentOutlinedIcon from '@mui/icons-material/InsertCommentOutlined';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import { B8TotalAvatars } from '../total-avatars';
 
 
 export function Post({ _id, title, text, image, likes, tags, postComments, currentUser, onPostLike, onPostRemove }) {
     let text_data = text?.split('|');
     let roles = (text_data && text_data[7]?.split(': ')[1].split(', '));
+
+    dayjs.extend(relativeTime);
 
     const { setQuickActions } = useContext(ActionsContext);
 
@@ -194,11 +198,12 @@ export function Post({ _id, title, text, image, likes, tags, postComments, curre
 
                 <div className={classNames('comments', styles.comments__wrapper)}>
                     <Typography variant="h4" component="h4" className={styles.comments_title}>
-                        Комментарии
+                        Отзывы
                     </Typography>
                     {(postComments?.length)
                         ?
                         <div className={styles.comments_list}>
+                            <B8TotalAvatars data={postComments}/>
                             {
                                 postComments?.map((comment, index) => (
                                     <Card key={index} className={classNames('comment', styles.comment_item)}>
@@ -211,7 +216,7 @@ export function Post({ _id, title, text, image, likes, tags, postComments, curre
                                             }
 
                                             title={comment.author.name}
-                                            subheader={dayjs(comment?.created_at).locale('ru').format('D MMMM YYYY')}
+                                            subheader={dayjs(comment?.created_at).from()}
                                         />
                                         <CardContent>
                                             {comment?.text}

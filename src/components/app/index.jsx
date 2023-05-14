@@ -27,6 +27,9 @@ import { getLocalData } from '../../utils/localStorage';
 import { FormAddReview } from '../forms/add-review';
 import { AddReviewPage } from '../../pages/add-review';
 import { FormEditProfile } from '../forms/edit-profile';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ru';
+
 
 export function App() {
     const [posts, setPosts] = useState([]);
@@ -43,6 +46,8 @@ export function App() {
 
     const backgroundLocation = location.state?.backgroundLocation;
     const initialPath = location.state?.initialPath;
+
+    dayjs.locale('ru');
 
     function handlePostLike(post) {
         const like = isLiked(post.likes, currentUser._id);
