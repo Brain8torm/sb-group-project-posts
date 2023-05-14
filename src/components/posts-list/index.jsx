@@ -1,4 +1,5 @@
 import { PostCard } from '../post-card';
+import { PostCardAlt } from '../post-card-alt';
 import { Grid, Pagination, Stack, Typography } from '@mui/material';
 import { useContext, useState } from 'react';
 import usePagination from '../../hooks/usePagination';
@@ -26,7 +27,11 @@ export function PostsList({ type }) {
                     _DATA.currentData()?.map((item, index) => (
                         (
                             <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                                <PostCard {...item} />
+                                {type === 'my'
+                                    ? <PostCard {...item} />
+                                    : <PostCardAlt {...item} />
+                                }
+                                
                             </Grid>
                         )))
                 }

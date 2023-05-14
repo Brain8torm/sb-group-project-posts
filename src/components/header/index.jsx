@@ -53,16 +53,6 @@ export function Header({ isLoading }) {
                             <B8Logo altText="LOGO" link="./" />
                         )}
                         <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                            <Link
-                                to="/login"
-                                replace
-                                state={{
-                                    backgroundLocation: location,
-                                    initialPath: location.pathname,
-                                }}
-                            >
-                                Войти
-                            </Link>
                             <IconButton
                                 size="large"
                                 aria-label="account of current user"
