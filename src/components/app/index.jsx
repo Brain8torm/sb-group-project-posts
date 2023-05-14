@@ -79,17 +79,29 @@ export function App() {
     }
 
     function handlePostDelete(post) {
-        api.deletePostById(post._id).then((deletedPost) => {
+        api.deletePostById((typeof post === 'object') ? post._id : post).then((deletedPost) => {
             const newPosts = posts.filter((postState) => {
                 return postState._id !== deletedPost._id;
             });
             setNotifyStatus({ status: 'error', msg: 'Пост удален' });
             setPosts(newPosts);
-            navigate('/', { replace: false });
         });
     }
 
     function handlePostsSwitch() { }
+
+    const handlePostPublish = (postId, data) => {
+        let isPublished = (data !== 'true') ? true : false;
+
+        api.editPost(postId, {'isPublished': isPublished}).then((updatePost) => {
+            const newPosts = posts.map((postState) => {
+                return postState._id === updatePost._id ? updatePost : postState;
+            });
+
+            setPosts(newPosts);
+            setNotifyStatus({ status: 'info', msg: `Пост ${updatePost.isPublished ? 'опубликован' : 'снят с публикации'}` });
+        });
+    };
 
     const onCloseRoutingModal = () => {
         navigate(initialPath || '/', { replace: true });
@@ -299,6 +311,7 @@ export function App() {
                     onPostLike: handlePostLike,
                     onPostDelete: handlePostDelete,
                     onPostsSwitch: handlePostsSwitch,
+                    onPostPublic: handlePostPublish
                 }}
             >
                 <ActionsContext.Provider
@@ -328,7 +341,7 @@ export function App() {
                                 <Route
                                     path='/post/:postID'
                                     element={<SinglePostPage updatedPost={updatedPost} handlePostDelete={handlePostDelete} />} />
-                                <Route path="/profile" element={<ProfilePage />} />
+                                <Route path="/profile" element={<ProfilePage handleDeleteClick />} />
                                 <Route
                                     path='/add-post'
                                     element={<AddPostPage handleFormSubmit={cbSubmitFormAddPost} />}

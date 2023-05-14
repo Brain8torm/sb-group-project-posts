@@ -7,17 +7,61 @@ import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import styles from './profile-page.module.css';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import classNames from 'classnames';
 
 
 export function ProfilePage() {
-    const { posts } = useContext(PostsContext);
+    const { posts, onPostPublic, onPostDelete } = useContext(PostsContext);
     const { currentUser } = useContext(UserContext);
 
-    const location = useLocation();
+    const navigate = useNavigate();
+    let location = useLocation();
+
+    const backgroundLocation = location.state?.backgroundLocation;
+    const initialPath = location.state?.initialPath;
+
+    location = (backgroundLocation && {
+        ...backgroundLocation,
+        pathname: initialPath,
+    }) ||
+        location;
+
+
+
+    function handlePublishClick(e) {
+        e.preventDefault();
+        const el = e.target.closest('.post')
+        onPostPublic(el.dataset.id, el.dataset.published);
+    }
+
+    function handleEditClick(e) {
+        e.preventDefault();
+        const el = e.target.closest('.post');
+        location = (backgroundLocation && {
+            ...backgroundLocation,
+            pathname: initialPath,
+        }) ||
+            location;
+        navigate('/edit-post/' + el.dataset.id, {
+            replace: true,
+            state: {
+                backgroundLocation: location,
+                initialPath: location.pathname,
+            }
+        });
+    };
+
+    function handleDeleteClick(e) {
+        e.preventDefault();
+        const el = e.target.closest('.post');
+        onPostDelete(el.dataset.id);
+    }
+
 
     return (
         <Container maxWidth="lg">
@@ -57,33 +101,48 @@ export function ProfilePage() {
                         <Typography variant='h4' component='h2'>
                             Мои посты
                         </Typography>
-                        <List sx={{ width: '100%' }}>
+                        <List sx={{ width: '100%' }} className={styles.post_list}>
                             {posts.map((item, index) => (
                                 (item.author._id === currentUser?._id)
-                                && <ListItem key={index} secondaryAction={
-                                    <>
-                                        <IconButton edge="end" aria-label="publish" sx={{ mr: .5 }}>
-                                            <VisibilityOutlinedIcon />
-                                        </IconButton>
+                                && <ListItem
+                                    key={index}
+                                    data-id={item?._id}
+                                    data-published={item?.isPublished}
+                                    className={classNames('post', styles.post_list__post)}
+                                    secondaryAction={
+                                        <>
+                                            <span className={styles.post_list__action} onClick={handlePublishClick}>
+                                                <IconButton edge="end" aria-label="publish" sx={{ mr: .5 }}>
+                                                    {item.isPublished
+                                                        ? <VisibilityOutlinedIcon />
+                                                        : <VisibilityOffOutlinedIcon />
+                                                    }
+                                                </IconButton>
+                                            </span>
 
-                                        <IconButton edge="end" aria-label="edit" sx={{ mr: .5 }}>
-                                            <EditOutlinedIcon />
-                                        </IconButton>
+                                            <span className={styles.post_list__action} onClick={handleEditClick}>
+                                                <IconButton edge="end" aria-label="edit" sx={{ mr: .5 }}>
+                                                    <EditOutlinedIcon />
+                                                </IconButton>
+                                            </span>
 
-                                        <IconButton edge="end" aria-label="delete">
-                                            <DeleteOutlinedIcon />
-                                        </IconButton>
-                                    </>
+                                            <span className={styles.post_list__action} onClick={handleDeleteClick}>
+                                                <IconButton edge="end" aria-label="delete">
+                                                    <DeleteOutlinedIcon />
+                                                </IconButton>
+                                            </span>
+                                        </>
 
-                                }>
+                                    }
+                                >
                                     <ListItemIcon>
                                         <ArticleOutlinedIcon />
                                     </ListItemIcon>
                                     <ListItemText primary={item.title} secondary={
-                                        <>
+                                        <span className={styles.post_list__meta}>
                                             <span>Добавлено: {dayjs(item.created_at).locale('ru').format('D MMMM YYYY HH:mm')}</span>
                                             <span>Обновлено: {dayjs(item.updated_at).locale('ru').format('D MMMM YYYY HH:mm')}</span>
-                                        </>
+                                        </span>
                                     } />
                                 </ListItem>
                             ))}

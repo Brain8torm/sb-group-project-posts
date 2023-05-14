@@ -10,7 +10,7 @@ import { UserContext } from '../../contexts/current-user-context';
 import { useContext } from 'react';
 
 
-export function PostCard({ _id, title, text, author, image, created_at, likes }) {
+export function PostCard({ _id, title, isPublished, author, image, created_at, likes }) {
 
     const { isLoading, onPostLike, onPostDelete } = useContext(PostsContext);
     const { currentUser } = useContext(UserContext);
@@ -53,7 +53,7 @@ export function PostCard({ _id, title, text, author, image, created_at, likes })
 
     return (
         <Card sx={{ maxWidth: 400 }} className={classNames(styles.item)} data-id={_id}>
-            <div className={classNames(styles.wrapper)}>
+            <div className={classNames(styles.wrapper, `${!isPublished && styles.unpublished}`)}>
                 <CloseIcon
                     className={classNames(styles.remove_icon)}
                     onClick={handleClickRemove}

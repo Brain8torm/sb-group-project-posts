@@ -10,7 +10,7 @@ export default function B8Notify({ status, msg }) {
 
     useEffect(
         () => {
-            setOpen(true);
+            if(status) setOpen(true);
         },
         [status]);
 
