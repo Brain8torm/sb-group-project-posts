@@ -26,7 +26,7 @@ export const movieRatingKP = (text) => {
 export const movieGenres = (text) => {
     let text_data = text?.split('|');
 
-    return text_data[4]?.split(',')[1];
+    return text_data[4]?.split(': ')[1].split(', ');
 };
 
 export const movieYears = (movies) => {
@@ -41,7 +41,7 @@ export const movieYears = (movies) => {
 export const movieAllGenres = (movies) => {
     let genres = [];
     movies.forEach((movie, index) => {
-        genres.push(movieGenres(movie.text));
+        genres.push(movieGenres(movie.text)[0]);
     });
 
     return [...new Set(genres)].sort((a, b) => a.localeCompare(b));

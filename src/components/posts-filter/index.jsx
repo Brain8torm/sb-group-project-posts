@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { FormControl, MenuItem, Select } from '@mui/material';
 import { PostsContext } from '../../contexts/posts-context';
-import { movieYear, movieYears, movieAllGenres } from '../../utils/movie';
+import { movieYear, movieYears, movieAllGenres, movieGenres } from '../../utils/movie';
 import styles from './posts-filter.module.css';
 
 export function PostsFilter() {
@@ -9,6 +9,7 @@ export function PostsFilter() {
 
     const [currentPostsSort, setCurrentPostsSort] = useState('');
     const [currentMovieYearFilter, setCurrentMovieYearFilter] = useState('');
+    const [currentMovieGenreFilter, setCurrentMovieGenreFilter] = useState('');
     const [filteredPosts, setFilteredPosts] = useState(posts);
     const [filterActive, setFilterActive] = useState(false);
 
@@ -28,8 +29,13 @@ export function PostsFilter() {
     };
 
     const handleMovieGenreFilterChange = (e) => {
-
-    }
+        if (e.target.value) {
+            setFilterActive(true);
+            setCurrentMovieGenreFilter(e.target.value);
+        } else {
+            setFilterActive(false);
+        }
+    };
 
     if (currentPostsSort === 'По названию') {
         posts?.sort((a, b) => (a.title > b.title ? 1 : b.title > a.title ? -1 : 0));
@@ -81,6 +87,14 @@ export function PostsFilter() {
 
             setFilteredPosts(filtered);
         }
+
+        if (currentMovieGenreFilter) {
+            let filtered = posts?.filter((item, index) =>
+                movieGenres(item.text).includes(currentMovieGenreFilter)
+            );
+
+            setFilteredPosts(filtered);
+        }
     }, [filterActive]);
 
     useEffect(() => {
@@ -90,13 +104,13 @@ export function PostsFilter() {
     return (
         <div className={styles.wrapper}>
             <div className={styles.filter}>
-                <FormControl size='small'>
+                <FormControl size="small">
                     <Select
-                        labelId='posts-filter-year-label'
-                        id='posts-filter-year-label'
+                        labelId="posts-filter-year-label"
+                        id="posts-filter-year-label"
                         displayEmpty
                         value={currentMovieYearFilter}
-                        label='Год выпуска'
+                        label="Год выпуска"
                         onChange={handleMovieYearFilterChange}
                         renderValue={(selected) => {
                             if (selected.length === 0) {
@@ -105,7 +119,7 @@ export function PostsFilter() {
                             return selected;
                         }}
                     >
-                        <MenuItem value=''>
+                        <MenuItem value="">
                             <em>По умолчанию</em>
                         </MenuItem>
                         {movieYears(posts)?.map((item, index) => (
@@ -120,8 +134,8 @@ export function PostsFilter() {
                         labelId="posts-filter-genre-label"
                         id="posts-filter-genre-label"
                         displayEmpty
-                        value={currentMovieYearFilter}
-                        label='Жанр'
+                        value={currentMovieGenreFilter}
+                        label="Жанр"
                         onChange={handleMovieGenreFilterChange}
                         renderValue={(selected) => {
                             if (selected.length === 0) {
@@ -130,7 +144,7 @@ export function PostsFilter() {
                             return selected;
                         }}
                     >
-                        <MenuItem value=''>
+                        <MenuItem value="">
                             <em>По умолчанию</em>
                         </MenuItem>
                         {movieAllGenres(posts)?.map((item, index) => (
@@ -142,13 +156,13 @@ export function PostsFilter() {
                 </FormControl>
             </div>
             <div className={styles.sort}>
-                <FormControl size='small'>
+                <FormControl size="small">
                     <Select
-                        labelId='posts-sort-label'
+                        labelId="posts-sort-label"
                         id="posts-sort"
                         displayEmpty
                         value={currentPostsSort}
-                        label='Сортировать'
+                        label="Сортировать"
                         onChange={handlePostsSortChange}
                         renderValue={(selected) => {
                             if (selected.length === 0) {
@@ -157,7 +171,7 @@ export function PostsFilter() {
                             return selected;
                         }}
                     >
-                        <MenuItem value=''>
+                        <MenuItem value="">
                             <em>По умолчанию</em>
                         </MenuItem>
                         {sortData.map((item, index) => (
