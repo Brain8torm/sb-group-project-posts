@@ -27,6 +27,9 @@ import { getLocalData } from '../../utils/localStorage';
 import { FormAddReview } from '../forms/add-review';
 import { AddReviewPage } from '../../pages/add-review';
 import { FormEditProfile } from '../forms/edit-profile';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ru';
+
 
 export function App() {
     const [posts, setPosts] = useState([]);
@@ -43,6 +46,8 @@ export function App() {
 
     const backgroundLocation = location.state?.backgroundLocation;
     const initialPath = location.state?.initialPath;
+
+    dayjs.locale('ru');
 
     function handlePostLike(post) {
         const like = isLiked(post.likes, currentUser._id);
@@ -235,7 +240,10 @@ export function App() {
 
     const cbSubmitFormAddReview = (dataForm) => {
         let currentPost = getLocalData('currentPost');
-        console.log('cbSubmitFormAddReview', dataForm);
+        let ratingData = (dataForm?.rating) ? `|Рейтинг:${dataForm.rating}` : '';
+        dataForm.text = dataForm.text + ratingData;
+        delete dataForm.rating;
+
         api.addReview(currentPost?._id, dataForm).then((ReviewedPost) => {
             setNotifyStatus({ status: 'success', msg: 'Отзыв добавлен' });
             setUpdatedPost(ReviewedPost);

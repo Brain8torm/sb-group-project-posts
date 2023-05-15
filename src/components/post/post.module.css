@@ -102,3 +102,11 @@
     align-items: center;
     gap: 5px;
 }
+
+.comment {
+}
+.comment_text {
+    margin-bottom: 15px;
+}
+.comment_rating {
+}
