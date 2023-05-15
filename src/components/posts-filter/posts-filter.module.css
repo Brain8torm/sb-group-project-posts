@@ -1,0 +1,10 @@
+.wrapper {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+}
+
+.filter {
+    display: flex;
+    gap: 10px;
+}
