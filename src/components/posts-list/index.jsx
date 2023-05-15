@@ -1,29 +1,18 @@
 import { PostCard } from '../post-card';
 import { PostCardAlt } from '../post-card-alt';
-import styles from './post-list.module.css';
-import { FormControl, Grid, MenuItem, Pagination, Select, Stack, Typography } from '@mui/material';
-import { useContext, useEffect, useState } from 'react';
+import { Grid, Pagination, Stack, Typography } from '@mui/material';
+import { useContext, useState } from 'react';
 import usePagination from '../../hooks/usePagination';
 import { PostsContext } from '../../contexts/posts-context';
-import { movieYear, movieYears } from '../../utils/movie';
 import { PostsFilter } from '../posts-filter';
 
 export function PostsList({ type }) {
-    const { posts, setPosts } = useContext(PostsContext);
+    const { posts } = useContext(PostsContext);
 
     const PER_PAGE = 12;
     const [page, setPage] = useState(1);
-    /*const [currentPostsSort, setCurrentPostsSort] = useState('');
-    const [currentMovieYearFilter, setCurrentMovieYearFilter] = useState('');
-    const [filteredPosts, setFilteredPosts] = useState(posts);
-    const [filterActive, setFilterActive] = useState(false);*/
     const count = Math.ceil(posts.length / PER_PAGE);
     const _DATA = usePagination(posts, PER_PAGE);
-
-    /*console.log('filterActive', filterActive);
-    console.log('filteredPosts', filteredPosts);
-    console.log('currentMovieYearFilter', currentMovieYearFilter);
-    console.log('posts', posts.length);*/
 
     const handlePageChange = (event, p) => {
         setPage(p);
