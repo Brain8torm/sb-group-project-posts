@@ -25,7 +25,6 @@ export function SinglePostPage({ updatedPost, handlePostDelete }) {
 
 
     const handlePostRemove = (postId) => {
-        console.log(postId)
         if (postId === currentUser._id) {
             handlePostDelete(postId);
         }

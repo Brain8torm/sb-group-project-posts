@@ -10,15 +10,18 @@ import { genres } from '../../utils/config';
 import { getLocalData } from '../../utils/localStorage';
 
 export function FormEditPost({ onSubmit }) {
-
-    const { control, handleSubmit, formState: { errors } } = useForm({ mode: "onBlur" });
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({ mode: 'onBlur' });
 
     const [isMoviePosts, setIsMoviePosts] = useState(true);
 
     let post = getLocalData('currentPost');
 
     let textData = post?.text?.split('|');
-    let roles = (textData && textData[7].split(': ')[1]);
+    let roles = textData && textData[7].split(': ')[1];
 
     let propsPostTitle = {};
     let propsPostText = {};
@@ -31,59 +34,40 @@ export function FormEditPost({ onSubmit }) {
     let propsMovieKP = {};
     let propsMovieIMDb = {};
 
-    //console.log(errors);
+    propsPostTitle.label = isMoviePosts ? 'Название фильма' : 'Заголовок поста';
+    propsPostTitle.required = true;
+    if (errors['title']) {
+        propsPostTitle.error = true;
+        propsPostTitle.label = 'Ошибка';
+        propsPostTitle.helperText = 'Поле обязательно для заполнения.';
+    }
 
+    propsPostImage.label = isMoviePosts ? 'Постер фильма' : 'Изображение поста';
 
+    propsPostText.label = isMoviePosts ? 'Описание фильма' : 'Текст поста';
+    propsPostText.required = true;
 
+    if (errors['text']) {
+        propsPostText.error = true;
+        propsPostText.label = 'Ошибка';
+        propsPostText.helperText = 'Поле обязательно для заполнения.';
+    }
 
-    //useEffect(() => {
+    propsMovieYear.label = 'Год выпуска';
 
-        propsPostTitle.label = isMoviePosts ? 'Название фильма' : 'Заголовок поста';
-        propsPostTitle.required = true;
-        if (errors['title']) {
-            propsPostTitle.error = true;
-            propsPostTitle.label = 'Ошибка'
-            propsPostTitle.helperText = "Поле обязательно для заполнения."
-        }
+    propsMovieDirector.label = 'Режиссер';
 
-        propsPostImage.label = isMoviePosts ? 'Постер фильма' : 'Изображение поста';
+    propsMovieCountry.label = 'Страна';
 
+    propsMovieGenre.label = 'Жанр';
 
-        propsPostText.label = isMoviePosts ? 'Описание фильма' : 'Текст поста';
-        propsPostText.required = true;
-        //propsPostText.value = isMoviePosts ? textData[0] : post.text;
-        if (errors['text']) {
-            propsPostText.error = true;
-            propsPostText.label = 'Ошибка'
-            propsPostText.helperText = "Поле обязательно для заполнения."
-        }
+    propsMovieActors.label = 'Актеры';
 
-        propsMovieYear.label = 'Год выпуска';
-        //propsMovieYear.value = textData[1].split(': ')[1];
+    propsMovieKP.label = 'Рейтинг КиноПоиск';
+    propsMovieKP.type = 'number';
 
-        propsMovieDirector.label = 'Режиссер';
-        //propsMovieDirector.value = textData[2].split(': ')[1];
-
-        propsMovieCountry.label = 'Страна';
-        //propsMovieCountry.value = textData[3].split(': ')[1];
-
-        propsMovieGenre.label = 'Жанр';
-        //propsMovieGenre.value = textData[4].split(': ')[1];
-
-        propsMovieActors.label = 'Актеры';
-        //propsMovieActors.value = roles;
-
-
-        propsMovieKP.label = 'Рейтинг КиноПоиск';
-        propsMovieKP.type = 'number';
-        //propsMovieKP.value = +textData[5].split(': ')[1];
-
-        propsMovieIMDb.label = 'Рейтинг IMDb';
-        propsMovieIMDb.type = 'number';
-        //propsMovieIMDb.value = +textData[6].split(': ')[1];
-
-    //}, []);
-
+    propsMovieIMDb.label = 'Рейтинг IMDb';
+    propsMovieIMDb.type = 'number';
 
     function onSwitchChange(event) {
         let checked = event.target.checked ? true : false;
@@ -128,13 +112,8 @@ export function FormEditPost({ onSubmit }) {
         }
     }, [open]);
 
-
-
-
     return (
-
         <div className={classNames(styles.wrapper)}>
-
             <div className={styles.switcher}>
                 <div className={styles.switcher_label}>Пост</div>
                 <Switch
@@ -152,35 +131,34 @@ export function FormEditPost({ onSubmit }) {
                 <div className={styles.row}>
                     <Controller
                         control={control}
-                        name='title'
+                        name="title"
                         rules={{
-                            required: { value: true, message: "Обязательно" }
+                            required: { value: true, message: 'Обязательно' },
                         }}
                         defaultValue={post.title}
                         render={({ field }) => (
                             <TextField
                                 {...field}
-                                variant='outlined'
-                                label='Заголовок поста'
+                                variant="outlined"
+                                label="Заголовок поста"
                                 {...propsPostTitle}
                                 fullWidth
                             />
                         )}
-
                     />
                 </div>
                 <div className={styles.row}>
                     <Controller
                         control={control}
-                        name='text'
+                        name="text"
                         rules={{
-                            required: { value: true, message: "Обязательно" }
+                            required: { value: true, message: 'Обязательно' },
                         }}
                         defaultValue={isMoviePosts ? textData[0] : post.text}
                         render={({ field }) => (
                             <TextField
                                 {...field}
-                                variant='outlined'
+                                variant="outlined"
                                 {...propsPostText}
                                 fullWidth
                                 multiline
@@ -192,32 +170,32 @@ export function FormEditPost({ onSubmit }) {
                 <div className={styles.row}>
                     <Controller
                         control={control}
-                        name='image'
+                        name="image"
                         render={({ field }) => (
                             <TextField
                                 {...field}
-                                variant='outlined'
-                                label='Изображение поста'
+                                variant="outlined"
+                                label="Изображение поста"
                                 {...propsPostImage}
-                                className='control'
+                                className="control"
                                 fullWidth
                             />
                         )}
                         defaultValue={post.image}
                     />
                 </div>
-                {isMoviePosts &&
+                {isMoviePosts && (
                     <div className={styles.movie_fields}>
                         <div className={styles.row}>
                             <Controller
                                 control={control}
-                                name='movie-year'
+                                name="movie-year"
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
-                                        variant='outlined'
+                                        variant="outlined"
                                         {...propsMovieYear}
-                                        className='control'
+                                        className="control"
                                         fullWidth
                                     />
                                 )}
@@ -227,13 +205,13 @@ export function FormEditPost({ onSubmit }) {
                         <div className={styles.row}>
                             <Controller
                                 control={control}
-                                name='movie-director'
+                                name="movie-director"
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
-                                        variant='outlined'
+                                        variant="outlined"
                                         {...propsMovieDirector}
-                                        className='control'
+                                        className="control"
                                         fullWidth
                                     />
                                 )}
@@ -243,13 +221,13 @@ export function FormEditPost({ onSubmit }) {
                         <div className={styles.row}>
                             <Controller
                                 control={control}
-                                name='movie-country'
+                                name="movie-country"
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
-                                        variant='outlined'
+                                        variant="outlined"
                                         {...propsMovieCountry}
-                                        className='control'
+                                        className="control"
                                         fullWidth
                                     />
                                 )}
@@ -259,13 +237,13 @@ export function FormEditPost({ onSubmit }) {
                         <div className={styles.row}>
                             <Controller
                                 control={control}
-                                name='movie-genre'
+                                name="movie-genre"
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
-                                        variant='outlined'
+                                        variant="outlined"
                                         {...propsMovieGenre}
-                                        className='control'
+                                        className="control"
                                         fullWidth
                                     />
                                 )}
@@ -275,38 +253,39 @@ export function FormEditPost({ onSubmit }) {
                         <div className={styles.row}>
                             <Controller
                                 control={control}
-                                name='movie-kp'
+                                name="movie-kp"
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
-                                        variant='outlined'
+                                        variant="outlined"
                                         {...propsMovieKP}
-                                        className='control'
+                                        className="control"
                                         fullWidth
                                         inputProps={{
                                             step: 0.01,
-                                            min: 0.00, max: 10.00
+                                            min: 0.0,
+                                            max: 10.0,
                                         }}
                                     />
                                 )}
                                 defaultValue={+textData[5].split(': ')[1]}
-
                             />
                         </div>
                         <div className={styles.row}>
                             <Controller
                                 control={control}
-                                name='movie-imdb'
+                                name="movie-imdb"
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
-                                        variant='outlined'
+                                        variant="outlined"
                                         {...propsMovieIMDb}
-                                        className='control'
+                                        className="control"
                                         fullWidth
                                         inputProps={{
                                             step: 0.01,
-                                            min: 0.00, max: 10.00
+                                            min: 0.0,
+                                            max: 10.0,
                                         }}
                                     />
                                 )}
@@ -316,13 +295,13 @@ export function FormEditPost({ onSubmit }) {
                         <div className={styles.row}>
                             <Controller
                                 control={control}
-                                name='movie-actors'
+                                name="movie-actors"
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
-                                        variant='outlined'
+                                        variant="outlined"
                                         {...propsMovieActors}
-                                        className='control'
+                                        className="control"
                                         fullWidth
                                     />
                                 )}
@@ -332,7 +311,7 @@ export function FormEditPost({ onSubmit }) {
                         <div className={styles.row}>
                             <Controller
                                 control={control}
-                                name='tags'
+                                name="tags"
                                 render={({ field: { onChange, value } }) => (
                                     <Autocomplete
                                         id="tags"
@@ -346,12 +325,8 @@ export function FormEditPost({ onSubmit }) {
                                             setOpen(false);
                                         }}
                                         onChange={(event, item) => {
-                                            console.log('item', item);
-                                            console.log('val', val);
-                                            console.log('filter', item.filter((option) => post.tags.indexOf(option) === -1));
                                             setVal([
                                                 ...item,
-                                                //...item.filter((option) => post.tags.indexOf(option) === -1),
                                             ]);
                                             onChange(item);
                                         }}
@@ -361,34 +336,34 @@ export function FormEditPost({ onSubmit }) {
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
-                                                name='tags'
-                                                label='Теги'
+                                                name="tags"
+                                                label="Теги"
                                                 InputProps={{
                                                     ...params.InputProps,
                                                     endAdornment: (
                                                         <>
-                                                            {loading ? <CircularProgress color='inherit' size={20} /> : null}
+                                                            {loading ? (
+                                                                <CircularProgress
+                                                                    color="inherit"
+                                                                    size={20}
+                                                                />
+                                                            ) : null}
                                                             {params.InputProps.endAdornment}
                                                         </>
                                                     ),
                                                 }}
-
                                             />
                                         )}
                                     />
                                 )}
                             />
                         </div>
-
                     </div>
-                }
+                )}
                 <div className={styles.row}>
-                    <FormButton type='submit'>Отправить</FormButton>
+                    <FormButton type="submit">Отправить</FormButton>
                 </div>
             </Form>
-
-
         </div>
-
     );
 }

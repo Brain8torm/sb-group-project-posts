@@ -41,6 +41,7 @@ export function App() {
     const [updatedPost, setUpdatedPost] = useState(null);
 
 
+
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -132,6 +133,7 @@ export function App() {
         });
         setPosts(myPosts);
     }, [allPosts]);
+
 
     const cbSubmitFormAddPost = (dataForm) => {
         let movieData = [];
@@ -316,6 +318,8 @@ export function App() {
                 value={{
                     posts,
                     isLoading,
+                    setPosts,
+                    setAllPosts,
                     onPostLike: handlePostLike,
                     onPostDelete: handlePostDelete,
                     onPostsSwitch: handlePostsSwitch,
