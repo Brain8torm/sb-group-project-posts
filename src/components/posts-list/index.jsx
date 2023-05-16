@@ -19,9 +19,11 @@ export function PostsList({ type }) {
         _DATA?.jump(p);
     };
 
+    // TODO: убрать фильтр для остальных постов <PostsFilter />
 
     return (
         <>
+            
             <PostsFilter />
             <Grid container spacing={2}>
                 {_DATA.currentData()?.map((item, index) => (
