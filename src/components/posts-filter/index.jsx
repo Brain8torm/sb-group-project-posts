@@ -1,83 +1,67 @@
 import { useContext, useEffect, useState } from 'react';
-import { FormControl, MenuItem, Select } from '@mui/material';
+import { Checkbox, FormControl, ListItemText, MenuItem, Select } from '@mui/material';
 import { PostsContext } from '../../contexts/posts-context';
 import { movieYear, movieYears, movieAllGenres, movieGenres } from '../../utils/movie';
 import styles from './posts-filter.module.css';
 
 export function PostsFilter() {
-    const { posts, setPosts } = useContext(PostsContext);
+    const { posts, currentSort, currentFilter, setCurrentSort, setCurrentFilter, onSortedData } =
+        useContext(PostsContext);
 
-    const [currentPostsSort, setCurrentPostsSort] = useState('');
-    const [currentMovieYearFilter, setCurrentMovieYearFilter] = useState('');
-    const [currentMovieGenreFilter, setCurrentMovieGenreFilter] = useState('');
+    const ITEM_HEIGHT = 48;
+    const ITEM_PADDING_TOP = 8;
+    const MenuProps = {
+        PaperProps: {
+            style: {
+                maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+                width: 250,
+            },
+        },
+    };
+
+    const [currentMovieYearFilter, setCurrentMovieYearFilter] = useState([]);
+    const [currentMovieGenreFilter, setCurrentMovieGenreFilter] = useState([]);
+
     const [filteredPosts, setFilteredPosts] = useState(posts);
     const [filterActive, setFilterActive] = useState(false);
 
     const sortData = ['По названию', 'По году выпуска', 'По рейтингу', 'По лайкам', 'По отзывам'];
 
     const handlePostsSortChange = (e) => {
-        setCurrentPostsSort(e.target.value);
+        setCurrentSort(e.target.value);
+        onSortedData(e.target.value);
     };
 
     const handleMovieYearFilterChange = (e) => {
-        if (e.target.value) {
-            setFilterActive(true);
-            setCurrentMovieYearFilter(e.target.value);
-        } else {
-            setFilterActive(false);
-        }
+        const selected = e.target;
+        let filters = currentFilter;
+
+        const {
+            target: { value },
+        } = e;
+        setCurrentMovieYearFilter(typeof value === 'string' ? value.split(',') : value);
+
+
+        filters.push({ [selected.name]: selected.value });
+
+        setCurrentFilter(filters);
+        console.log('curent', currentFilter);
     };
 
     const handleMovieGenreFilterChange = (e) => {
-        if (e.target.value) {
-            setFilterActive(true);
-            setCurrentMovieGenreFilter(e.target.value);
-        } else {
-            setFilterActive(false);
-        }
+        const selected = e.target;
+        let filters = currentFilter;
+
+        const {
+            target: { value },
+        } = e;
+        setCurrentMovieGenreFilter(typeof value === 'string' ? value.split(',') : value);
+
+        filters.push({ [selected.name]: selected.value });
+
+        setCurrentFilter(filters);
+        console.log('curent', currentFilter);
     };
-
-    if (currentPostsSort === 'По названию') {
-        posts?.sort((a, b) => (a.title > b.title ? 1 : b.title > a.title ? -1 : 0));
-    }
-
-    if (currentPostsSort === 'По лайкам') {
-        posts?.sort((a, b) =>
-            a.likes.length < b.likes.length ? 1 : b.likes.length < a.likes.length ? -1 : 0
-        );
-    }
-
-    if (currentPostsSort === 'По отзывам') {
-        posts?.sort((a, b) =>
-            a.comments.length < b.comments.length
-                ? 1
-                : b.comments.length < a.comments.length
-                ? -1
-                : 0
-        );
-    }
-
-    if (currentPostsSort === 'По году') {
-        posts?.sort((a, b) => {
-            const yearA = a?.text.split('|')[1].split(':')[1];
-            const yearB = b?.text.split('|')[1].split(':')[1];
-            return yearA < yearB ? 1 : yearB < yearA ? -1 : 0;
-        });
-    }
-
-    if (currentPostsSort === 'По рейтингу') {
-        posts?.sort((a, b) => {
-            const yearA = a?.text.split('|')[5].split(':')[1];
-            const yearB = b?.text.split('|')[5].split(':')[1];
-            return yearA < yearB ? 1 : yearB < yearA ? -1 : 0;
-        });
-    }
-
-    if (currentPostsSort === '') {
-        posts?.sort((a, b) =>
-            b.created_at > a.created_at ? 1 : a.created_at > b.created_at ? -1 : 0
-        );
-    }
 
     useEffect(() => {
         if (currentMovieYearFilter) {
@@ -97,9 +81,9 @@ export function PostsFilter() {
         }
     }, [filterActive]);
 
-    useEffect(() => {
+    /*useEffect(() => {
         if (filteredPosts) setPosts(filteredPosts);
-    }, [filteredPosts]);
+    }, [filteredPosts]);*/
 
     return (
         <div className={styles.wrapper}>
@@ -108,15 +92,17 @@ export function PostsFilter() {
                     <Select
                         labelId="posts-filter-year-label"
                         id="posts-filter-year-label"
+                        name="filter-year"
                         displayEmpty
                         value={currentMovieYearFilter}
                         label="Год выпуска"
+                        MenuProps={MenuProps}
                         onChange={handleMovieYearFilterChange}
                         renderValue={(selected) => {
                             if (selected.length === 0) {
                                 return <em>Год выпуска</em>;
                             }
-                            return selected;
+                            return selected.join(', ');
                         }}
                     >
                         <MenuItem value="">
@@ -124,7 +110,8 @@ export function PostsFilter() {
                         </MenuItem>
                         {movieYears(posts)?.map((item, index) => (
                             <MenuItem key={index} value={item}>
-                                {item}
+                                <Checkbox checked={currentMovieGenreFilter.indexOf(item) > -1} />
+                                <ListItemText primary={item} />
                             </MenuItem>
                         ))}
                     </Select>
@@ -133,15 +120,18 @@ export function PostsFilter() {
                     <Select
                         labelId="posts-filter-genre-label"
                         id="posts-filter-genre-label"
+                        name="filter-genre"
                         displayEmpty
+                        multiple
                         value={currentMovieGenreFilter}
                         label="Жанр"
+                        MenuProps={MenuProps}
                         onChange={handleMovieGenreFilterChange}
                         renderValue={(selected) => {
                             if (selected.length === 0) {
                                 return <em>Жанр</em>;
                             }
-                            return selected;
+                            return selected.join(', ');
                         }}
                     >
                         <MenuItem value="">
@@ -149,7 +139,8 @@ export function PostsFilter() {
                         </MenuItem>
                         {movieAllGenres(posts)?.map((item, index) => (
                             <MenuItem key={index} value={item}>
-                                {item}
+                                <Checkbox checked={currentMovieGenreFilter.indexOf(item) > -1} />
+                                <ListItemText primary={item} />
                             </MenuItem>
                         ))}
                     </Select>
@@ -161,7 +152,7 @@ export function PostsFilter() {
                         labelId="posts-sort-label"
                         id="posts-sort"
                         displayEmpty
-                        value={currentPostsSort}
+                        value={currentSort}
                         label="Сортировать"
                         onChange={handlePostsSortChange}
                         renderValue={(selected) => {

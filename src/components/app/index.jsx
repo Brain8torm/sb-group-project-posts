@@ -39,7 +39,8 @@ export function App() {
     const [isLoading, setIsLoading] = useState(false);
     const [quickActions, setQuickActions] = useState([]);
     const [updatedPost, setUpdatedPost] = useState(null);
-
+    const [currentSort, setCurrentSort] = useState('');
+    const [currentFilter, setCurrentFilter] = useState([]);
 
 
     const navigate = useNavigate();
@@ -124,7 +125,6 @@ export function App() {
             .finally(() => {
                 setIsLoading(false);
             });
-
     }, []);
 
     useEffect(() => {
@@ -132,6 +132,7 @@ export function App() {
             return post.author._id === currentUser._id;
         });
         setPosts(myPosts);
+        console.log('allPosts changed');
     }, [allPosts]);
 
 
@@ -310,7 +311,55 @@ export function App() {
         navigate('/login')
     }
 
-
+    function sortedData(currentSort) {
+        console.log(currentSort);
+        let sorted;
+    
+        if (currentSort === 'По названию') {
+            setPosts(posts?.sort((a, b) => (a.title > b.title ? 1 : b.title > a.title ? -1 : 0)));
+        }
+    
+        if (currentSort === 'По лайкам') {
+            posts?.sort((a, b) =>
+                a.likes.length < b.likes.length ? 1 : b.likes.length < a.likes.length ? -1 : 0
+            );
+        }
+    
+        if (currentSort === 'По отзывам') {
+            posts?.sort((a, b) =>
+                a.comments.length < b.comments.length
+                    ? 1
+                    : b.comments.length < a.comments.length
+                    ? -1
+                    : 0
+            );
+        }
+    
+        if (currentSort === 'По году выпуска') {
+            console.log('year sort')
+            posts?.sort((a, b) => {
+                const yearA = +a?.text.split('|')[1].split(':')[1];
+                console.log('yearA', typeof yearA);
+                const yearB = +b?.text.split('|')[1].split(':')[1];
+                return yearA < yearB ? 1 : yearB < yearA ? -1 : 0;
+            });
+        }
+    
+        if (currentSort === 'По рейтингу') {
+            posts?.sort((a, b) => {
+                const yearA = a?.text.split('|')[5].split(':')[1];
+                const yearB = b?.text.split('|')[5].split(':')[1];
+                return yearA < yearB ? 1 : yearB < yearA ? -1 : 0;
+            });
+        }
+    
+        if (currentSort === '') {
+            posts?.sort((a, b) =>
+                b.created_at > a.created_at ? 1 : a.created_at > b.created_at ? -1 : 0
+            );
+        }
+    
+      }
 
     return (
         <NotifyContext.Provider value={{ setNotifyStatus }}>
@@ -318,8 +367,13 @@ export function App() {
                 value={{
                     posts,
                     isLoading,
+                    currentSort,
+                    currentFilter,
                     setPosts,
                     setAllPosts,
+                    setCurrentSort,
+                    setCurrentFilter,
+                    onSortedData: sortedData,
                     onPostLike: handlePostLike,
                     onPostDelete: handlePostDelete,
                     onPostsSwitch: handlePostsSwitch,
