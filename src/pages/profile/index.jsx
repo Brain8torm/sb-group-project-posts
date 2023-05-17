@@ -1,6 +1,6 @@
 import { Avatar, Button, Grid, IconButton, List, ListItem, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import { Container } from '@mui/system';
-import { useContext } from 'react';
+import { useCallback, useContext } from 'react';
 import { UserContext } from '../../contexts/current-user-context';
 import { PostsContext } from '../../contexts/posts-context';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
@@ -13,11 +13,15 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
+import api from '../../utils/api';
+import { useApi } from '../../hooks/useApi';
+import { NotifyContext } from '../../contexts/notify-context';
 
 
 export function ProfilePage() {
-    const { posts, onPostPublic, onPostDelete } = useContext(PostsContext);
+    const { onPostPublic, onPostDelete } = useContext(PostsContext);
     const { currentUser } = useContext(UserContext);
+    const { notifyStatus, setNotifyStatus } = useContext(NotifyContext);
 
     const navigate = useNavigate();
     let location = useLocation();
@@ -31,12 +35,23 @@ export function ProfilePage() {
     }) ||
         location;
 
-
+    const handleGetPosts = useCallback(() => api.getPostsList(), []);
+    const { data: posts, loading: isLoading, error: errorState, setData: setPosts } = useApi(handleGetPosts);
 
     function handlePublishClick(e) {
         e.preventDefault();
         const el = e.target.closest('.post')
-        onPostPublic(el.dataset.id, el.dataset.published);
+        onPostPublic(el.dataset.id, el.dataset.published).then(updatePost => {
+
+            const newPosts = posts.map((postState) => {
+                return postState._id === updatePost._id ? updatePost : postState;
+            });
+
+            setPosts(newPosts);
+            setNotifyStatus({ status: 'info', msg: `Пост ${updatePost.title} ${updatePost.isPublished ? 'опубликован' : 'снят с публикации'}` });
+        }).finally(
+            
+        );
     }
 
     function handleEditClick(e) {
@@ -102,7 +117,7 @@ export function ProfilePage() {
                             Мои посты
                         </Typography>
                         <List sx={{ width: '100%' }} className={styles.post_list}>
-                            {posts.map((item, index) => (
+                            {posts?.map((item, index) => (
                                 (item.author._id === currentUser?._id)
                                 && <ListItem
                                     key={index}

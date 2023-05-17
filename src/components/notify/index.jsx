@@ -12,7 +12,7 @@ export default function B8Notify({ status, msg }) {
         () => {
             if(status) setOpen(true);
         },
-        [status]);
+        [status, msg]);
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
