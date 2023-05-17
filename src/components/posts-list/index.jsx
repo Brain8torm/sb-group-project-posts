@@ -23,8 +23,9 @@ export function PostsList({ type }) {
 
     return (
         <>
-            
-            <PostsFilter />
+            {type === 'my' &&
+                <PostsFilter />
+            }
             <Grid container spacing={2}>
                 {_DATA.currentData()?.map((item, index) => (
                     <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
