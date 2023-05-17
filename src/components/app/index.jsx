@@ -98,15 +98,17 @@ export function App() {
     function handlePostsSwitch() { }
 
     const handlePostPublish = (postId, data) => {
+
         let isPublished = (data !== 'true') ? true : false;
 
-        api.editPost(postId, {'isPublished': isPublished}).then((updatePost) => {
+        return api.editPost(postId, {'isPublished': isPublished}).then((updatePost) => {
             const newPosts = posts.map((postState) => {
                 return postState._id === updatePost._id ? updatePost : postState;
             });
 
             setPosts(newPosts);
             setNotifyStatus({ status: 'info', msg: `Пост ${updatePost.isPublished ? 'опубликован' : 'снят с публикации'}` });
+            return updatePost;
         });
     };
 
@@ -132,7 +134,6 @@ export function App() {
             return post.author._id === currentUser._id;
         });
         setPosts(myPosts);
-        console.log('allPosts changed');
     }, [allPosts]);
 
 
@@ -312,7 +313,6 @@ export function App() {
     }
 
     function sortedData(currentSort) {
-        console.log(currentSort);
         let sorted;
     
         if (currentSort === 'По названию') {
@@ -336,11 +336,10 @@ export function App() {
         }
     
         if (currentSort === 'По году выпуска') {
-            console.log('year sort')
             posts?.sort((a, b) => {
                 const yearA = +a?.text.split('|')[1].split(':')[1];
-                console.log('yearA', typeof yearA);
                 const yearB = +b?.text.split('|')[1].split(':')[1];
+                
                 return yearA < yearB ? 1 : yearB < yearA ? -1 : 0;
             });
         }
@@ -362,7 +361,7 @@ export function App() {
       }
 
     return (
-        <NotifyContext.Provider value={{ setNotifyStatus }}>
+        <NotifyContext.Provider value={{ notifyStatus, setNotifyStatus }}>
             <PostsContext.Provider
                 value={{
                     posts,
