@@ -5,25 +5,23 @@ import { useContext, useState } from 'react';
 import usePagination from '../../hooks/usePagination';
 import { PostsContext } from '../../contexts/posts-context';
 import { PostsFilter } from '../posts-filter';
-import { useLocation } from 'react-router-dom';
 
-export function PostsList({ type }) {
-    const { posts, setPosts } = useContext(PostsContext);
+export function FavoritesList({ type }) {
 
-    
+    const { favoritePosts } = useContext(PostsContext);
+
+    console.log('favoritePosts', favoritePosts);
 
     const PER_PAGE = 12;
     const [page, setPage] = useState(1);
 
-    const count = Math.ceil(posts.length / PER_PAGE);
-    const _DATA = usePagination(posts, PER_PAGE);
+    const count = Math.ceil(favoritePosts.length / PER_PAGE);
+    const _DATA = usePagination(favoritePosts, PER_PAGE);
 
     const handlePageChange = (event, p) => {
         setPage(p);
         _DATA?.jump(p);
     };
-
-    // TODO: убрать фильтр для остальных постов <PostsFilter />
 
     return (
         <>

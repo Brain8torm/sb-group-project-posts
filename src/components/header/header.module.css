@@ -33,3 +33,28 @@
     text-decoration: none;
     background-color: rgba(0, 0, 0, 0.04);
 }
+
+.nav_link {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.75;
+    text-transform: uppercase;
+    letter-spacing: 0.02857em;
+    position: relative;
+}
+
+.nav_link:after {
+    display: block;
+    content: '';
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.8);
+    width: 0;
+    transition: width 0.5s ease-in-out 0s;
+    margin: 0 auto;
+}
+
+.nav_link:hover:after {
+    width: 100%;
+}
