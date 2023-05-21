@@ -50,7 +50,7 @@ export function Header({ isLoading }) {
                         {isLoading ? (
                             <Skeleton sx={{ height: 36 }} animation="wave" variant="rectangular" />
                         ) : (
-                            <B8Logo altText="LOGO" link="./" />
+                            <B8Logo  altText="movieDb" link="./" />
                         )}
                         <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                             <IconButton
@@ -86,19 +86,24 @@ export function Header({ isLoading }) {
                                 </MenuItem>
                             </Menu>
                         </Box>
+                        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+
+                            <Link to='/favorites' className={styles.nav_link}>Избранное</Link>
+
+                        </Box>
                         <Box sx={{ flexGrow: 0, marginLeft: 'auto' }}>
-                            <Box display='inline-flex' sx={{ marginRight: 2}}>
-                            <Link
-                                to="/login"
-                                replace
-                                state={{
-                                    backgroundLocation: location,
-                                    initialPath: location.pathname,
-                                }}
-                                className={styles.link_button}
-                            >
-                                Войти
-                            </Link>
+                            <Box display="inline-flex" sx={{ marginRight: 2 }}>
+                                <Link
+                                    to="/login"
+                                    replace
+                                    state={{
+                                        backgroundLocation: location,
+                                        initialPath: location.pathname,
+                                    }}
+                                    className={styles.link_button}
+                                >
+                                    Войти
+                                </Link>
                             </Box>
                             <Tooltip title="Открыть меню">
                                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

@@ -29,19 +29,19 @@ import { AddReviewPage } from '../../pages/add-review';
 import { FormEditProfile } from '../forms/edit-profile';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
-
+import { FavoritesPage } from '../../pages/favorites';
 
 export function App() {
     const [posts, setPosts] = useState([]);
     const [allPosts, setAllPosts] = useState([]);
     const [currentUser, setCurrentUser] = useState(null);
+    const [favoritePosts, setFavoritePosts] = useState([]);
     const [notifyStatus, setNotifyStatus] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [quickActions, setQuickActions] = useState([]);
     const [updatedPost, setUpdatedPost] = useState(null);
     const [currentSort, setCurrentSort] = useState('');
     const [currentFilter, setCurrentFilter] = useState([]);
-
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -59,13 +59,17 @@ export function App() {
                 return postState._id === updatePost._id ? updatePost : postState;
             });
 
+            setPosts(newPosts);
+
             if (like) {
+                setFavoritePosts((prevState) =>
+                    prevState.filter((post) => post._id !== updatePost._id)
+                );
                 setNotifyStatus({ status: 'error', msg: 'Лайк снят' });
             } else {
+                setFavoritePosts((prevState) => [...prevState, updatePost]);
                 setNotifyStatus({ status: 'success', msg: 'Лайк поставлен' });
             }
-
-            setPosts(newPosts);
         });
     }
 
@@ -86,7 +90,7 @@ export function App() {
     }
 
     function handlePostDelete(post) {
-        api.deletePostById((typeof post === 'object') ? post._id : post).then((deletedPost) => {
+        api.deletePostById(typeof post === 'object' ? post._id : post).then((deletedPost) => {
             const newPosts = posts.filter((postState) => {
                 return postState._id !== deletedPost._id;
             });
@@ -95,19 +99,21 @@ export function App() {
         });
     }
 
-    function handlePostsSwitch() { }
+    function handlePostsSwitch() {}
 
     const handlePostPublish = (postId, data) => {
+        let isPublished = data !== 'true' ? true : false;
 
-        let isPublished = (data !== 'true') ? true : false;
-
-        return api.editPost(postId, {'isPublished': isPublished}).then((updatePost) => {
+        return api.editPost(postId, { isPublished: isPublished }).then((updatePost) => {
             const newPosts = posts.map((postState) => {
                 return postState._id === updatePost._id ? updatePost : postState;
             });
 
             setPosts(newPosts);
-            setNotifyStatus({ status: 'info', msg: `Пост ${updatePost.isPublished ? 'опубликован' : 'снят с публикации'}` });
+            setNotifyStatus({
+                status: 'info',
+                msg: `Пост ${updatePost.isPublished ? 'опубликован' : 'снят с публикации'}`,
+            });
             return updatePost;
         });
     };
@@ -122,6 +128,13 @@ export function App() {
             .then(([postsData, userInfoData]) => {
                 setCurrentUser(userInfoData);
                 setAllPosts(postsData);
+                const favoritePosts = postsData.filter((post) => {
+                    return (
+                        post.author._id == userInfoData._id &&
+                        isLiked(post.likes, userInfoData._id)
+                    );
+                });
+                setFavoritePosts(favoritePosts);
             })
             .catch((err) => console.log(err))
             .finally(() => {
@@ -136,14 +149,13 @@ export function App() {
         setPosts(myPosts);
     }, [allPosts]);
 
-
     const cbSubmitFormAddPost = (dataForm) => {
         let movieData = [];
         let postData = {
             title: '',
             text: '',
             image: '',
-            tags: []
+            tags: [],
         };
 
         Object.keys(dataForm).find((a) => {
@@ -174,62 +186,59 @@ export function App() {
         api.addPost(postData)
             .then((newPost) => {
                 setNotifyStatus({ status: 'success', msg: 'Пост добавлен' });
-                posts.unshift(newPost)
+                posts.unshift(newPost);
                 setPosts(posts);
                 setTimeout(() => {
                     navigate(initialPath || '/', { replace: true });
                 }, 500);
             })
             .catch((err) => console.log(err));
-
     };
 
     const cbSubmitFormEditPost = (dataForm) => {
-
         let currentPost = getLocalData('currentPost');
 
         let movieData = [];
         let postData = {
-            title: "",
-            text: "",
-            image: "",
-            tags: []
+            title: '',
+            text: '',
+            image: '',
+            tags: [],
         };
 
         Object.keys(dataForm).find((a) => {
-            if (a.includes("movie")) {
-                if (a === "movie-year") {
+            if (a.includes('movie')) {
+                if (a === 'movie-year') {
                     movieData.push(`Год: ${dataForm[a]}`);
-                } else if (a === "movie-director") {
+                } else if (a === 'movie-director') {
                     movieData.push(`Режиссер: ${dataForm[a]}`);
-                } else if (a === "movie-country") {
+                } else if (a === 'movie-country') {
                     movieData.push(`Страна: ${dataForm[a]}`);
-                } else if (a === "movie-genre") {
+                } else if (a === 'movie-genre') {
                     movieData.push(`Жанр: ${dataForm[a]}`);
-                } else if (a === "movie-kp") {
+                } else if (a === 'movie-kp') {
                     movieData.push(`КП: ${dataForm[a]}`);
-                } else if (a === "movie-imdb") {
+                } else if (a === 'movie-imdb') {
                     movieData.push(`IMDb: ${dataForm[a]}`);
-                } else if (a === "movie-actors") {
+                } else if (a === 'movie-actors') {
                     movieData.push(`В ролях: ${dataForm[a]}`);
                 }
             }
         });
 
         postData.title = dataForm.title;
-        postData.text = dataForm.text + "|" + movieData.join("|");
+        postData.text = dataForm.text + '|' + movieData.join('|');
         postData.image = dataForm.image;
         postData.tags = dataForm.tags;
-
 
         const diff = Object.entries(postData).reduce((acc, [key, value]) => {
             if (
                 !Object.values(postData).includes(value) ||
                 !Object.values(currentPost).includes(value)
             )
-                acc[key] = value
+                acc[key] = value;
 
-            return acc
+            return acc;
         }, {});
 
         api.editPost(currentPost._id, diff).then((editedPost) => {
@@ -238,13 +247,12 @@ export function App() {
             setTimeout(() => {
                 navigate(initialPath || '/', { replace: true });
             }, 500);
-
         });
-    }
+    };
 
     const cbSubmitFormAddReview = (dataForm) => {
         let currentPost = getLocalData('currentPost');
-        let ratingData = (dataForm?.rating) ? `|Рейтинг:${dataForm.rating}` : '';
+        let ratingData = dataForm?.rating ? `|Рейтинг:${dataForm.rating}` : '';
         dataForm.text = dataForm.text + ratingData;
         delete dataForm.rating;
 
@@ -255,7 +263,7 @@ export function App() {
                 navigate(initialPath || '/', { replace: true });
             }, 500);
         });
-    }
+    };
 
     const cbSubmitFormChangeAvatar = (dataForm) => {
         api.changeUserAvatar(dataForm).then((userData) => {
@@ -272,59 +280,67 @@ export function App() {
             setTimeout(() => {
                 navigate(initialPath || '/', { replace: true });
             }, 500);
-        })
+        });
     };
-
 
     const cbSubmitFormLoginRegister = (dataForm) => {
         console.log('cbSubmitFormLoginRegister', dataForm);
-    }
+    };
     const cbSubmitFormLogin = (dataForm) => {
         console.log('cbSubmitFormLogin', dataForm);
-    }
+    };
     const cbSubmitFormResetPassword = (dataForm) => {
         console.log('cbSubmitFormResetPassword', dataForm);
-    }
+    };
 
     const handleClickButtonLogin = (e) => {
         e.preventDefault();
-        navigate('/login', { replace: true, state: { backgroundLocation: { ...location, state: null }, initialPath } })
-    }
+        navigate('/login', {
+            replace: true,
+            state: { backgroundLocation: { ...location, state: null }, initialPath },
+        });
+    };
     const handleClickButtonReset = (e) => {
         e.preventDefault();
-        navigate('/reset-password', { replace: true, state: { backgroundLocation: { ...location, state: null }, initialPath } })
-    }
+        navigate('/reset-password', {
+            replace: true,
+            state: { backgroundLocation: { ...location, state: null }, initialPath },
+        });
+    };
     const handleClickButtonRegister = (e) => {
         e.preventDefault();
         console.log('register click');
-        navigate('/register', { replace: true, state: { backgroundLocation: { ...location, state: null }, initialPath } })
-    }
+        navigate('/register', {
+            replace: true,
+            state: { backgroundLocation: { ...location, state: null }, initialPath },
+        });
+    };
     const handleClickButtonResetNotModal = (e) => {
         e.preventDefault();
-        navigate('/reset-password')
-    }
+        navigate('/reset-password');
+    };
     const handleClickButtonRegisterNotModal = (e) => {
         e.preventDefault();
-        navigate('/register')
-    }
+        navigate('/register');
+    };
     const handleClickButtonLoginNotModal = (e) => {
         e.preventDefault();
-        navigate('/login')
-    }
+        navigate('/login');
+    };
 
     function sortedData(currentSort) {
         let sorted;
-    
+
         if (currentSort === 'По названию') {
             setPosts(posts?.sort((a, b) => (a.title > b.title ? 1 : b.title > a.title ? -1 : 0)));
         }
-    
+
         if (currentSort === 'По лайкам') {
             posts?.sort((a, b) =>
                 a.likes.length < b.likes.length ? 1 : b.likes.length < a.likes.length ? -1 : 0
             );
         }
-    
+
         if (currentSort === 'По отзывам') {
             posts?.sort((a, b) =>
                 a.comments.length < b.comments.length
@@ -334,16 +350,16 @@ export function App() {
                     : 0
             );
         }
-    
+
         if (currentSort === 'По году выпуска') {
             posts?.sort((a, b) => {
                 const yearA = +a?.text.split('|')[1].split(':')[1];
                 const yearB = +b?.text.split('|')[1].split(':')[1];
-                
+
                 return yearA < yearB ? 1 : yearB < yearA ? -1 : 0;
             });
         }
-    
+
         if (currentSort === 'По рейтингу') {
             posts?.sort((a, b) => {
                 const yearA = a?.text.split('|')[5].split(':')[1];
@@ -351,14 +367,13 @@ export function App() {
                 return yearA < yearB ? 1 : yearB < yearA ? -1 : 0;
             });
         }
-    
+
         if (currentSort === '') {
             posts?.sort((a, b) =>
                 b.created_at > a.created_at ? 1 : a.created_at > b.created_at ? -1 : 0
             );
         }
-    
-      }
+    }
 
     return (
         <NotifyContext.Provider value={{ notifyStatus, setNotifyStatus }}>
@@ -368,6 +383,7 @@ export function App() {
                     isLoading,
                     currentSort,
                     currentFilter,
+                    favoritePosts,
                     setPosts,
                     setAllPosts,
                     setCurrentSort,
@@ -376,11 +392,10 @@ export function App() {
                     onPostLike: handlePostLike,
                     onPostDelete: handlePostDelete,
                     onPostsSwitch: handlePostsSwitch,
-                    onPostPublic: handlePostPublish
+                    onPostPublic: handlePostPublish,
                 }}
             >
-                <ActionsContext.Provider
-                    value={{ setQuickActions }}>
+                <ActionsContext.Provider value={{ setQuickActions }}>
                     <UserContext.Provider value={{ currentUser }}>
                         <Header currentUser={currentUser} isLoading={isLoading} />
 
@@ -395,7 +410,7 @@ export function App() {
                                 }
                             >
                                 <Route
-                                    path='/'
+                                    path="/"
                                     element={
                                         <HomePage
                                             isLoading={isLoading}
@@ -404,41 +419,63 @@ export function App() {
                                     }
                                 />
                                 <Route
-                                    path='/post/:postID'
-                                    element={<SinglePostPage updatedPost={updatedPost} handlePostDelete={handlePostDelete} />} />
-                                <Route path="/profile" element={<ProfilePage handleDeleteClick />} />
+                                    path="/favorites"
+                                    element={<FavoritesPage isLoading={isLoading} />}
+                                />
                                 <Route
-                                    path='/add-post'
+                                    path="/post/:postID"
+                                    element={
+                                        <SinglePostPage
+                                            updatedPost={updatedPost}
+                                            handlePostDelete={handlePostDelete}
+                                        />
+                                    }
+                                />
+                                <Route
+                                    path="/profile"
+                                    element={<ProfilePage handleDeleteClick />}
+                                />
+                                <Route
+                                    path="/add-post"
                                     element={<AddPostPage handleFormSubmit={cbSubmitFormAddPost} />}
                                 />
                                 <Route
-                                    path='/edit-post/:postID'
-                                    element={<EditPostPage handleFormSubmit={cbSubmitFormEditPost} />}
+                                    path="/edit-post/:postID"
+                                    element={
+                                        <EditPostPage handleFormSubmit={cbSubmitFormEditPost} />
+                                    }
                                 />
                                 <Route
-                                    path='/add-review'
-                                    element={<AddReviewPage handleFormSubmit={cbSubmitFormAddReview} />}
+                                    path="/add-review"
+                                    element={
+                                        <AddReviewPage handleFormSubmit={cbSubmitFormAddReview} />
+                                    }
                                 />
                                 <Route
-                                    path='/login'
-                                    element={<Login
-                                        onSubmit={cbSubmitFormLogin}
-                                        onNavigateRegister={handleClickButtonRegisterNotModal}
-                                        onNavigateReset={handleClickButtonResetNotModal} />} />
+                                    path="/login"
+                                    element={
+                                        <Login
+                                            onSubmit={cbSubmitFormLogin}
+                                            onNavigateRegister={handleClickButtonRegisterNotModal}
+                                            onNavigateReset={handleClickButtonResetNotModal}
+                                        />
+                                    }
+                                />
                                 <Route
-                                    path='/register'
-                                    element={<Register
-                                        onSubmit={cbSubmitFormLoginRegister}
-                                        onNavigateLogin={handleClickButtonLoginNotModal} />} />
-                                <Route path='/reset-password' element={123} />
-                                <Route path='/change-avatar' element={
-                                    <FormChangeAvatar />
-                                } />
-                                <Route path='/edit-profile' element={
-                                    <FormEditProfile
-                                        onSubmit={cbSubmitFormEditProfile}
-                                    />
-                                } />
+                                    path="/register"
+                                    element={
+                                        <Register
+                                            onSubmit={cbSubmitFormLoginRegister}
+                                            onNavigateLogin={handleClickButtonLoginNotModal}
+                                        />
+                                    }
+                                />
+                                <Route path="/reset-password" element={123} />
+                                <Route path="/change-avatar" element={<FormChangeAvatar />} />
+                                <Route
+                                    path="/edit-profile"
+                                    element={<FormEditProfile onSubmit={cbSubmitFormEditProfile} />}
+                                />
 
                                 <Route path="*" element={<NotFoundPage />} />
                             </Routes>
@@ -458,7 +495,6 @@ export function App() {
                                     key={action.name}
                                     icon={action.icon}
                                     tooltipTitle={action.name}
-
                                 />
                             ))}
                         </SpeedDial>
@@ -466,7 +502,7 @@ export function App() {
                         {backgroundLocation && (
                             <Routes>
                                 <Route
-                                    path='/login'
+                                    path="/login"
                                     element={
                                         <B8Modal isOpen onClose={onCloseRoutingModal}>
                                             <Login
@@ -478,7 +514,7 @@ export function App() {
                                     }
                                 />
                                 <Route
-                                    path='/register'
+                                    path="/register"
                                     element={
                                         <B8Modal isOpen onClose={onCloseRoutingModal}>
                                             <Register
@@ -489,7 +525,7 @@ export function App() {
                                     }
                                 />
                                 <Route
-                                    path='/add-post'
+                                    path="/add-post"
                                     element={
                                         <B8Modal isOpen onClose={onCloseRoutingModal}>
                                             <FormAddPost onSubmit={cbSubmitFormAddPost} />
@@ -497,7 +533,7 @@ export function App() {
                                     }
                                 />
                                 <Route
-                                    path='/edit-post/:postID'
+                                    path="/edit-post/:postID"
                                     element={
                                         <B8Modal isOpen onClose={onCloseRoutingModal}>
                                             <FormEditPost onSubmit={cbSubmitFormEditPost} />
@@ -505,28 +541,33 @@ export function App() {
                                     }
                                 />
                                 <Route
-                                    path='/add-review'
+                                    path="/add-review"
                                     element={
                                         <B8Modal isOpen onClose={onCloseRoutingModal}>
                                             <FormAddReview onSubmit={cbSubmitFormAddReview} />
                                         </B8Modal>
                                     }
                                 />
-                                <Route path="/reset-password" element={<B8Modal isOpen>123</B8Modal>} />
                                 <Route
-                                    path='/change-avatar'
+                                    path="/reset-password"
+                                    element={<B8Modal isOpen>123</B8Modal>}
+                                />
+                                <Route
+                                    path="/change-avatar"
                                     element={
                                         <B8Modal isOpen onClose={onCloseRoutingModal}>
                                             <FormChangeAvatar onSubmit={cbSubmitFormChangeAvatar} />
                                         </B8Modal>
-                                    } />
+                                    }
+                                />
                                 <Route
-                                    path='/edit-profile'
+                                    path="/edit-profile"
                                     element={
                                         <B8Modal isOpen onClose={onCloseRoutingModal}>
                                             <FormEditProfile onSubmit={cbSubmitFormEditProfile} />
                                         </B8Modal>
-                                    } />
+                                    }
+                                />
                             </Routes>
                         )}
                     </UserContext.Provider>
