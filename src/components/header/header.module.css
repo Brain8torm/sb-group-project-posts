@@ -58,3 +58,7 @@
 .nav_link:hover:after {
     width: 100%;
 }
+
+.menu_item {
+        pointer-events: none;
+}

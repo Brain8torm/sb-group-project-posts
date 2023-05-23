@@ -12,7 +12,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
 import styles from './header.module.css';
 import { B8Logo } from '../logo';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { UserContext } from '../../contexts/current-user-context';
 import { Skeleton } from '@mui/material';
@@ -26,6 +26,7 @@ export function Header({ isLoading }) {
     const [anchorElUser, setAnchorElUser] = useState(null);
 
     const location = useLocation();
+    const navigate = useNavigate();
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -34,7 +35,8 @@ export function Header({ isLoading }) {
         setAnchorElUser(event.currentTarget);
     };
 
-    const handleCloseNavMenu = () => {
+    const handleCloseNavMenu = (e) => {
+        navigate(e.target.getAttribute('href'), { replace: true });
         setAnchorElNav(null);
     };
 
@@ -81,15 +83,17 @@ export function Header({ isLoading }) {
                                     display: { xs: 'block', md: 'none' },
                                 }}
                             >
-                                <MenuItem onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center">{'menu'}</Typography>
+                                <MenuItem className={styles.menu_item} onClick={handleCloseNavMenu} href='/favorites'>
+                                    <Typography textAlign="center">Избранное</Typography>
+                                </MenuItem>
+                                <MenuItem className={styles.menu_item} onClick={handleCloseNavMenu} href='/reviews'>
+                                    <Typography textAlign="center">Отзывы</Typography>
                                 </MenuItem>
                             </Menu>
                         </Box>
-                        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-
+                        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, gap: 1.5 }}>
                             <Link to='/favorites' className={styles.nav_link}>Избранное</Link>
-
+                            <Link to='/reviews' className={styles.nav_link}>Отзывы</Link>
                         </Box>
                         <Box sx={{ flexGrow: 0, marginLeft: 'auto' }}>
                             <Box display="inline-flex" sx={{ marginRight: 2 }}>
