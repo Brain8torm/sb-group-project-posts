@@ -30,6 +30,7 @@ import { FormEditProfile } from '../forms/edit-profile';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import { FavoritesPage } from '../../pages/favorites';
+import { ReviewsPage } from '../../pages/reviews';
 
 export function App() {
     const [posts, setPosts] = useState([]);
@@ -130,8 +131,7 @@ export function App() {
                 setAllPosts(postsData);
                 const favoritePosts = postsData.filter((post) => {
                     return (
-                        post.author._id == userInfoData._id &&
-                        isLiked(post.likes, userInfoData._id)
+                        post.author._id == userInfoData._id && isLiked(post.likes, userInfoData._id)
                     );
                 });
                 setFavoritePosts(favoritePosts);
@@ -421,6 +421,10 @@ export function App() {
                                 <Route
                                     path="/favorites"
                                     element={<FavoritesPage isLoading={isLoading} />}
+                                />
+                                <Route
+                                    path="/reviews"
+                                    element={<ReviewsPage isLoading={isLoading} />}
                                 />
                                 <Route
                                     path="/post/:postID"

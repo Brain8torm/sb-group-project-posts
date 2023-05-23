@@ -96,6 +96,13 @@ class Api {
         }).then(this.#onResponse);
     }
 
+
+    getReviews() {
+        return fetch(this.#getApiUrl(`/posts/comments/`), {
+            headers: this.#headers,
+        }).then(this.#onResponse);
+    }
+
     addReview(postID, postData) {
         return fetch(this.#getApiUrl(`/posts/comments/${postID}`), {
             headers: this.#headers,

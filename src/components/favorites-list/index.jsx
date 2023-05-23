@@ -10,8 +10,6 @@ export function FavoritesList({ type }) {
 
     const { favoritePosts } = useContext(PostsContext);
 
-    console.log('favoritePosts', favoritePosts);
-
     const PER_PAGE = 12;
     const [page, setPage] = useState(1);
 
