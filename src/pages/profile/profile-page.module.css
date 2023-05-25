@@ -14,19 +14,25 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.post_list {
+.post_list, .reviews_list {
 
 }
 
-.post_list__post {
+.post_list__post, .reviews_list__review {
 
 }
 
-.post_list__meta {
+.post_list__meta, .reviews_list__meta {
     display: flex;
     gap: 10px;
 }
 
-.post_list__action button > * {
+.post_list__action button > *, .reviews_list__action button > * {
     pointer-events: none;
+}
+
+.reviews_list__rating {
+    display: flex;
+    gap: 5px;
+    align-items: center;
 }
