@@ -14,10 +14,14 @@ import styles from './header.module.css';
 import { B8Logo } from '../logo';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
+import { PostsContext } from '../../contexts/posts-context'
 import { UserContext } from '../../contexts/current-user-context';
 import { Skeleton } from '@mui/material';
 
-export function Header({ isLoading }) {
+export function Header() {
+
+    const { isLoading } = useContext(PostsContext);
+    
     const settings = ['Профиль', 'Выход'];
 
     const { currentUser } = useContext(UserContext);
