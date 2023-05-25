@@ -107,7 +107,7 @@ export function PostAlt({ _id, title, text, image, likes, postComments, currentU
                             ))
                         }
                     </div>
-                    {!postComments.length &&
+                    {!postComments?.length &&
                         <Alert severity="warning">
                             <AlertTitle>Warning</AlertTitle>
                             Пока комментарии отсутствуют...

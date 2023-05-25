@@ -1,21 +1,25 @@
-import { Avatar, Card, CardContent, CardHeader, CardMedia, SvgIcon } from '@mui/material';
+import { Avatar, Card, CardContent, CardHeader, CardMedia, Skeleton, SvgIcon } from '@mui/material';
 import classNames from 'classnames';
 import styles from './post-card.module.css';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import { isLiked } from '../../utils/posts';
 import { Link } from 'react-router-dom';
-import { PostsContext } from '../../contexts/post-context';
+import { PostsContext } from '../../contexts/posts-context';
 import { UserContext } from '../../contexts/current-user-context';
 import { useContext } from 'react';
+import GradeOutlinedIcon from '@mui/icons-material/GradeOutlined';
+import { movieCountry, movieYear, movieRatingKP, movieDirector } from '../../utils/movie';
 
 
-export function PostCard({ _id, title, text, author, image, created_at, likes }) {
+export function PostCard({ _id, title, isPublished, author, image, created_at, likes, text }) {
 
-    const { onPostLike, onPostDelete } = useContext(PostsContext);
+    const { isLoading, onPostLike, onPostDelete } = useContext(PostsContext);
     const { currentUser } = useContext(UserContext);
 
     const like = isLiked(likes, currentUser?._id);
+
+    const titleWithYear = `${title} (${movieYear(text)})`;
 
     function FireIcon(props) {
         return (
@@ -52,31 +56,51 @@ export function PostCard({ _id, title, text, author, image, created_at, likes })
     }
 
     return (
-        <Card sx={{ maxWidth: 345 }} className={classNames(styles.item)} data-id={_id}>
-            <div className={classNames(styles.wrapper)}>
-                <CloseIcon className={classNames(styles.remove_icon)} onClick={handleClickRemove} />
-
-                <CardMedia
-                    component="img"
-                    image={image && image}
-                    alt=""
-                    className={classNames(styles.media)}
+        <Card sx={{ maxWidth: 400 }} className={classNames(styles.item)} data-id={_id}>
+            <div className={classNames(styles.wrapper, `${!isPublished && styles.unpublished}`)}>
+                <CloseIcon
+                    className={classNames(styles.remove_icon)}
+                    onClick={handleClickRemove}
                 />
-                <Link to={`/post/${_id}`} className="post__link"><CardHeader title={title}></CardHeader></Link>
-                <CardContent className={classNames(styles.body)}>
-                    <div className={classNames(styles.date)}><CalendarIcon fontSize="small" className={classNames(styles.date_icon)} /> {dayjs(created_at).locale('ru').format('D MMMM YYYY')}</div>
-                    <p>{text}</p>
-
-                </CardContent>
-                <div className={styles.footer}>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <Avatar aria-label="post" className={classNames(styles.avatar)} sx={{ width: 35, height: 35 }}>
-                            R
-                        </Avatar>
-                        <div className={classNames(styles.author)}>{author.name}</div>
+                {isLoading
+                    ? <Skeleton sx={{ height: 390 }} animation="wave" variant="rectangular" />
+                    :
+                    <Link to={`/post/${_id}`} className="post__link">
+                        <CardMedia
+                            component="img"
+                            image={image ? image : './images/post-default.svg'}
+                            alt=""
+                            className={classNames(styles.media)}
+                        />
+                    </Link>
+                }
+                <Link to={`/post/${_id}`} className={styles.link}>
+                    <CardHeader className={styles.title} title={titleWithYear}></CardHeader>
+                </Link>
+                <div className={classNames(styles.body)}>
+                    <div className={styles.meta}>
+                        <div className={classNames(styles.country)}>
+                            Страна: {movieCountry(text)}
+                        </div>
+                        <div className={classNames(styles.director)}>
+                            Режиссер: {movieDirector(text)}
+                        </div>
                     </div>
-                    <div data-like={like} className={classNames(styles.like, { [styles.like__active]: like })} style={{ display: 'flex', alignItems: 'center' }} onClick={handleClickLike}><FireIcon /> {likes?.length}</div>
+                    <div className={styles.footer}>
+                        <div className={styles.rating}>
+                            <div
+                                className={classNames(styles.rating_kp)}
+                            ><GradeOutlinedIcon /> {movieRatingKP(text)}</div>
+                        </div>
+                        <div
+                            data-like={like}
+                            className={classNames(styles.like, { [styles.like__active]: like })}
+                            style={{ display: 'flex', alignItems: 'center' }}
+                            onClick={handleClickLike}
+                        ><FireIcon /> {likes?.length}</div>
+                    </div>
                 </div>
+
             </div>
         </Card>
     );

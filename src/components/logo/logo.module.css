@@ -17,3 +17,8 @@
   letter-spacing: 0.3rem;
   text-decoration: none;
 }
+
+.link {
+  display: flex;
+  align-items: center;
+}

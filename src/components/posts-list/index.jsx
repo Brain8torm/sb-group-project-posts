@@ -1,57 +1,40 @@
-import Masonry from '@mui/lab/Masonry';
 import { PostCard } from '../post-card';
+import { PostCardAlt } from '../post-card-alt';
 import { Grid, Pagination, Stack, Typography } from '@mui/material';
 import { useContext, useState } from 'react';
 import usePagination from '../../hooks/usePagination';
-import { PostsContext } from '../../contexts/post-context';
-
+import { PostsContext } from '../../contexts/posts-context';
+import { PostsFilter } from '../posts-filter';
+import { useLocation } from 'react-router-dom';
 
 export function PostsList({ type }) {
-    const { posts } = useContext(PostsContext);
+    const { posts, setPosts } = useContext(PostsContext);
 
+    
 
     const PER_PAGE = 12;
     const [page, setPage] = useState(1);
-    const count = Math.ceil((posts.length) / PER_PAGE);
+
+    const count = Math.ceil(posts.length / PER_PAGE);
     const _DATA = usePagination(posts, PER_PAGE);
-
-
 
     const handlePageChange = (event, p) => {
         setPage(p);
-        _DATA.jump(p);
+        _DATA?.jump(p);
     };
+
+    // TODO: убрать фильтр для остальных постов <PostsFilter />
 
     return (
         <>
-            {type === 'masonry'
-                ?
-                (
-                    <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
-                        <>
-                            {
-                                _DATA.currentData().map((item, index) => (
-                                    <PostCard key={index} cardImg='image' {...item} />
-                                ))
-                            }
-                        </>
-                    </Masonry>
-                )
-                :
-                (
-
-                    <Grid container spacing={2}>
-                        {
-                            _DATA.currentData().map((item, index) => (
-                                <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                                    <PostCard {...item} />
-                                </Grid>
-                            ))
-
-                        }
+            {type === 'my' && <PostsFilter />}
+            <Grid container spacing={2}>
+                {_DATA.currentData()?.map((item, index) => (
+                    <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                        {type === 'my' ? <PostCard {...item} /> : <PostCardAlt {...item} />}
                     </Grid>
-                )
-            }
+                ))}
+            </Grid>
 
             <Stack spacing={2} sx={{ marginTop: 2 }}>
                 <Typography>Страница {page}</Typography>

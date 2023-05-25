@@ -1,64 +1,108 @@
 .item {
-  box-shadow: 0 3px 12px -1px rgba(7, 10, 25, 0.05),
-    0 22px 27px -20px rgba(7, 10, 25, 0.05) !important;
-  border-radius: 15px !important;
+    box-shadow: 0 3px 12px -1px rgba(7, 10, 25, 0.05), 0 22px 27px -20px rgba(7, 10, 25, 0.05) !important;
+    border-radius: 15px !important;
+    height: 100%;
 }
+
+.link {
+    color: #444;
+    text-decoration: none;
+}
+
+.title * {
+  font-size: 1.25rem !important;
+}
+
 .wrapper {
-  position: relative;
-  padding: 15px 0;
+    position: relative;
+    /*padding: 15px 0;*/
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.item .unpublished:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.5);
+    z-index: 1;
 }
 
 .media {
-  border-top-right-radius: 15px;
-  border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-top-left-radius: 15px;
+    max-height: 390px;
 }
 .avatar {
-  margin-right: 13px;
+    margin-right: 13px;
 }
 
 .body {
-  padding: 0 16px !important;
+    padding: 0 16px !important;
+    height: 100%;
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
 }
 .footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 16px;
+    display: flex;
+    justify-content: space-between;
+    padding: 16px;
 }
 
 .like {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .like__active {
-  color: #ff0000;
+    color: #ff0000;
 }
 
 .like__active svg path {
-  fill: #ff0000;
+    fill: #ff0000;
 }
 
 .date {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .date_icon {
-  margin-right: 10px;
+    margin-right: 10px;
 }
 
 .remove_icon {
-  position: absolute;
-  right: 10px;
-  top: 25px;
-  visibility: none;
-  opacity: 0;
-  transtition: opacity 1s ease-in;
-  cursor: pointer;
+    position: absolute;
+    right: 10px;
+    top: 25px;
+    visibility: none;
+    opacity: 0;
+    transtition: opacity 1s ease-in;
+    cursor: pointer;
 }
 
 .item:hover .remove_icon {
-  opacity: 1;
-  visibility: visible;
+    opacity: 1;
+    visibility: visible;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+}
+
+.rating_kp {
+    display: flex;
+    align-items: center;
+}
+
+.director {
+}
+
+.country {
 }

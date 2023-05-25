@@ -1,0 +1,11 @@
+.item {
+    width: 100%;
+}
+
+.title {
+    color: #000000;
+    margin: 24px 0px;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+}
