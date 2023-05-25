@@ -48,7 +48,7 @@ export function Header({ isLoading }) {
         <>
             <AppBar position="static">
                 <Container maxWidth="lg">
-                    <Toolbar>
+                    <Toolbar disableGutters>
                         {isLoading ? (
                             <Skeleton sx={{ height: 36 }} animation="wave" variant="rectangular" />
                         ) : (
