@@ -9,7 +9,6 @@ import { NotifyContext } from '../../contexts/notify-context';
 import { setLocalData } from '../../utils/localStorage';
 import { UserContext } from '../../contexts/current-user-context';
 
-
 export function SinglePostPage({ updatedPost, handlePostDelete }) {
     const { postID } = useParams();
     const [post, setPost] = useState(null);
@@ -23,12 +22,11 @@ export function SinglePostPage({ updatedPost, handlePostDelete }) {
         setLocalData('currentPost', updatedPost);
     }, [updatedPost]);
 
-
     const handlePostRemove = (postId) => {
         if (postId === currentUser._id) {
             handlePostDelete(postId);
         }
-    }
+    };
 
     useEffect(() => {
         api.getInfoPost(postID)
@@ -38,7 +36,7 @@ export function SinglePostPage({ updatedPost, handlePostDelete }) {
                 setLocalData('currentPost', postData);
             })
             .catch((err) => {
-                setErrorState(err)
+                setErrorState(err);
             });
     }, [postID]);
 
@@ -48,7 +46,8 @@ export function SinglePostPage({ updatedPost, handlePostDelete }) {
         api.changeLikePostStatus(post._id, like)
             .then((likedPost) => {
                 setPost(likedPost);
-            }).finally(() => {
+            })
+            .finally(() => {
                 if (like) {
                     setNotifyStatus({ status: 'error', msg: 'Лайк снят' });
                 } else {
@@ -57,13 +56,11 @@ export function SinglePostPage({ updatedPost, handlePostDelete }) {
             });
     }
 
-
     return (
         <>
-            {!errorState &&
-                <Container maxWidth='lg'>
-                    {(post?.author._id === currentUser?._id)
-                        ?
+            {!errorState && (
+                <Container maxWidth="lg">
+                    {post?.author._id === currentUser?._id ? (
                         <Post
                             {...post}
                             postComments={postComments}
@@ -71,17 +68,16 @@ export function SinglePostPage({ updatedPost, handlePostDelete }) {
                             onPostLike={handlePostLike}
                             onPostRemove={handlePostRemove}
                         />
-                        :
+                    ) : (
                         <PostAlt
                             {...post}
                             postComments={postComments}
                             currentUser={currentUser}
                             onPostLike={handlePostLike}
                         />
-                    }
+                    )}
                 </Container>
-
-            }
+            )}
         </>
     );
 }

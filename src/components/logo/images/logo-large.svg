@@ -5,9 +5,9 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   width="200"
-   height="60"
-   viewBox="0 0 52.916666 15.875"
+   width="500"
+   height="120"
+   viewBox="0 0 132.29167 31.75"
    version="1.1"
    id="svg8">
   <defs
@@ -28,13 +28,13 @@
      id="layer1">
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:12.7px;line-height:1.25;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583;"
-       x="-0.59531313"
-       y="13.148849"
+       style="font-style:normal;font-weight:normal;font-size:31.75px;line-height:1.25;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="-0.19970714"
+       y="28.765198"
        id="text841"><tspan
          id="tspan839"
-         x="-0.59531313"
-         y="13.148849"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.7px;font-family:'Catorze27 Style 1';-inkscape-font-specification:'Catorze27 Style 1, ';fill:#ffffff;fill-opacity:1;stroke-width:0.264583;">moviesLISTS</tspan></text>
+         x="-0.19970714"
+         y="28.765198"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:31.75px;font-family:'Catorze27 Style 1';-inkscape-font-specification:'Catorze27 Style 1, ';fill:#ffffff;fill-opacity:1;stroke-width:0.264583">moviesLISTS</tspan></text>
   </g>
 </svg>

@@ -31,11 +31,14 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import { FavoritesPage } from '../../pages/favorites';
 import { ReviewsPage } from '../../pages/reviews';
+import { MoviesPage } from '../../pages/movies';
 
 export function App() {
     const [posts, setPosts] = useState([]);
     const [allPosts, setAllPosts] = useState([]);
+    const [reviews, setReviews] = useState([]);
     const [currentUser, setCurrentUser] = useState(null);
+    const [allUsers, setAllUsers] = useState([]);
     const [favoritePosts, setFavoritePosts] = useState([]);
     const [notifyStatus, setNotifyStatus] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -126,20 +129,34 @@ export function App() {
     useEffect(() => {
         setIsLoading(true);
         api.getAllInfo()
-            .then(([postsData, userInfoData]) => {
+            .then(([postsData, userInfoData, reviewsData]) => {
                 setCurrentUser(userInfoData);
                 setAllPosts(postsData);
                 const favoritePosts = postsData.filter((post) => {
                     return (
-                        post.author._id == userInfoData._id && isLiked(post.likes, userInfoData._id)
+                        post.author._id === userInfoData._id &&
+                        isLiked(post.likes, userInfoData._id)
                     );
                 });
                 setFavoritePosts(favoritePosts);
+                let filteredReviews = reviewsData
+                    .filter((item, index) => item?.author.group === 'group-11')
+                    .sort((a, b) => a?.created_at < b?.created_at);
+                setReviews(filteredReviews);
             })
             .catch((err) => console.log(err))
             .finally(() => {
                 setIsLoading(false);
             });
+
+        api.getUsers()
+            .then((usersData) => {
+                let filteredUsers = usersData.filter(
+                    (user, index) => user?.group && user?.group === 'group-11'
+                );
+                setAllUsers(filteredUsers);
+            })
+            .catch((err) => console.log(err));
     }, []);
 
     useEffect(() => {
@@ -186,8 +203,10 @@ export function App() {
         api.addPost(postData)
             .then((newPost) => {
                 setNotifyStatus({ status: 'success', msg: 'Пост добавлен' });
-                posts.unshift(newPost);
-                setPosts(posts);
+
+                const newPosts = [newPost, ...posts];
+
+                setPosts(newPosts);
                 setTimeout(() => {
                     navigate(initialPath || '/', { replace: true });
                 }, 500);
@@ -360,6 +379,7 @@ export function App() {
             });
         }
 
+        // TODO: переписать с учетом методов в ./src/utils/movies.js
         if (currentSort === 'По рейтингу') {
             posts?.sort((a, b) => {
                 const yearA = a?.text.split('|')[5].split(':')[1];
@@ -384,6 +404,7 @@ export function App() {
                     currentSort,
                     currentFilter,
                     favoritePosts,
+                    reviews,
                     setPosts,
                     setAllPosts,
                     setCurrentSort,
@@ -396,7 +417,7 @@ export function App() {
                 }}
             >
                 <ActionsContext.Provider value={{ setQuickActions }}>
-                    <UserContext.Provider value={{ currentUser }}>
+                    <UserContext.Provider value={{ currentUser, allUsers }}>
                         <Header currentUser={currentUser} isLoading={isLoading} />
 
                         <main className={classNames(styles.section_large)}>
@@ -409,10 +430,11 @@ export function App() {
                                     location
                                 }
                             >
+                                <Route path="/" element={<HomePage />} />
                                 <Route
-                                    path="/"
+                                    path="/movies"
                                     element={
-                                        <HomePage
+                                        <MoviesPage
                                             isLoading={isLoading}
                                             handleSwitchChange={handleSwitchChange}
                                         />

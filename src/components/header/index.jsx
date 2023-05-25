@@ -52,7 +52,7 @@ export function Header({ isLoading }) {
                         {isLoading ? (
                             <Skeleton sx={{ height: 36 }} animation="wave" variant="rectangular" />
                         ) : (
-                            <B8Logo  altText="movieDb" link="./" />
+                            <B8Logo altText="movieDb" link="./" />
                         )}
                         <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                             <IconButton
@@ -83,17 +83,39 @@ export function Header({ isLoading }) {
                                     display: { xs: 'block', md: 'none' },
                                 }}
                             >
-                                <MenuItem className={styles.menu_item} onClick={handleCloseNavMenu} href='/favorites'>
+                                <MenuItem
+                                    className={styles.menu_item}
+                                    onClick={handleCloseNavMenu}
+                                    href="/movies"
+                                >
+                                    <Typography textAlign="center">Все фильмы</Typography>
+                                </MenuItem>
+                                <MenuItem
+                                    className={styles.menu_item}
+                                    onClick={handleCloseNavMenu}
+                                    href="/favorites"
+                                >
                                     <Typography textAlign="center">Избранное</Typography>
                                 </MenuItem>
-                                <MenuItem className={styles.menu_item} onClick={handleCloseNavMenu} href='/reviews'>
+                                <MenuItem
+                                    className={styles.menu_item}
+                                    onClick={handleCloseNavMenu}
+                                    href="/reviews"
+                                >
                                     <Typography textAlign="center">Отзывы</Typography>
                                 </MenuItem>
                             </Menu>
                         </Box>
                         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, gap: 1.5 }}>
-                            <Link to='/favorites' className={styles.nav_link}>Избранное</Link>
-                            <Link to='/reviews' className={styles.nav_link}>Отзывы</Link>
+                            <Link to="/movies" className={styles.nav_link}>
+                                Все фильмы
+                            </Link>
+                            <Link to="/favorites" className={styles.nav_link}>
+                                Избранное
+                            </Link>
+                            <Link to="/reviews" className={styles.nav_link}>
+                                Отзывы
+                            </Link>
                         </Box>
                         <Box sx={{ flexGrow: 0, marginLeft: 'auto' }}>
                             <Box display="inline-flex" sx={{ marginRight: 2 }}>
