@@ -29,8 +29,14 @@ class Api {
         }).then(this.#onResponse);
     }
 
+    getReviews() {
+        return fetch(this.#getApiUrl(`/posts/comments/`), {
+            headers: this.#headers,
+        }).then(this.#onResponse);
+    }
+
     getAllInfo() {
-        return Promise.all([this.getPostsList(), this.getUserInfo()]);
+        return Promise.all([this.getPostsList(), this.getUserInfo(), this.getReviews()]);
     }
 
     search(searchQuery) {
@@ -97,11 +103,7 @@ class Api {
     }
 
 
-    getReviews() {
-        return fetch(this.#getApiUrl(`/posts/comments/`), {
-            headers: this.#headers,
-        }).then(this.#onResponse);
-    }
+
 
     addReview(postID, postData) {
         return fetch(this.#getApiUrl(`/posts/comments/${postID}`), {
@@ -130,6 +132,12 @@ class Api {
     checkToken(token) {
         return fetch(this.#getApiUrl(`/users/me`), {
             headers: { ...this.#headers, authorization: `Bearer ${token}` },
+        }).then(this.#onResponse);
+    }
+
+    getUsers() {
+        return fetch(this.#getApiUrl(`/users`), {
+            headers: this.#headers,
         }).then(this.#onResponse);
     }
 

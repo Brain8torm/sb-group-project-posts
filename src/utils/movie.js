@@ -8,7 +8,7 @@ export const movieCountry = (text, single = true) => {
     let text_data = text?.split('|');
     let country = text_data[3]?.split(': ')[1];
 
-    return single ? country.split(', ')[0] : country;
+    return single ? country?.split(', ')[0] : country;
 };
 
 export const movieDirector = (text) => {
@@ -46,3 +46,13 @@ export const movieAllGenres = (movies) => {
 
     return [...new Set(genres)].sort((a, b) => a.localeCompare(b));
 };
+
+
+export const movieTop = (movies, number = 10) => {
+    return [...movies]?.sort((a, b) => {
+        const ratingA = movieRatingKP(a?.text);
+        const ratingB = movieRatingKP(b?.text);
+        return ratingA < ratingB ? 1 : ratingB < ratingA ? -1 : 0;
+    }).slice(0, 10);
+}
+

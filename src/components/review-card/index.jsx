@@ -43,8 +43,6 @@ export function ReviewCard({ text, author, post, created_at }) {
 
     let commentedPost = posts?.filter((item) => item._id === post)[0];
 
-    console.log(commentedPost);
-
     return (
         <Card className={classNames('review', styles.item)}>
             <CardHeader
