@@ -1,26 +1,36 @@
 import { Rating, Switch, TextField } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { Form } from '../form';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 import styles from './forms.module.css';
 import classNames from 'classnames';
 import { FormButton } from '../form-button';
+import { useParams } from 'react-router';
+import { reviewByID, reviewRating, reviewText } from '../../utils/reviews';
+import { PostsContext } from '../../contexts/posts-context';
 
-export function FormAddReview({ onSubmit }) {
+export function FormEditReview({ onSubmit }) {
+    const { reviewID } = useParams();
+
     const {
         control,
         handleSubmit,
         formState: { errors },
     } = useForm({ mode: 'onBlur' });
 
-    const [isMoviePosts, setIsMoviePosts] = useState(true);
-    //const [commentRating, setCommentRating] = useState(6);
+    const { reviews } = useContext(PostsContext);
+
+    const review = reviewByID(reviews, reviewID);
+    const rating = reviewRating(review?.text);
+    const text = reviewText(review?.text);
+
+    const [commentRating, setCommentRating] = useState(rating);
 
     let propsReviewText = {};
     let propsReviewRating = {};
 
-    propsReviewText.label = isMoviePosts ? 'Текст отзыва' : 'Текст комментария';
+    propsReviewText.label = 'Текст отзыва';
     propsReviewText.required = true;
     if (errors['text']) {
         propsReviewText.error = true;
@@ -36,30 +46,22 @@ export function FormAddReview({ onSubmit }) {
         propsReviewRating.helperText = 'Поле обязательно для заполнения.';
     }
 
-
-    function onSwitchChange(event) {
-        let checked = event.target.checked ? true : false;
-        setIsMoviePosts(checked);
-        return checked;
-    }
-
     return (
         <div className={classNames(styles.wrapper)}>
-            <div className={styles.switcher}>
-                <div className={styles.switcher_label}>Пост</div>
-                <Switch
-                    checked={isMoviePosts}
-                    value={isMoviePosts ? 'movie' : 'post'}
-                    onChange={onSwitchChange}
-                    name="post-type"
-                />
-                <div className={styles.switcher_label}>Фильм</div>
-            </div>
-            <Form
-                title={isMoviePosts ? 'Добавить отзыв' : 'Добавить комментарий'}
-                handleFormSubmit={handleSubmit(onSubmit)}
-            >
+            <Form title="Редактировать отзыв" handleFormSubmit={handleSubmit(onSubmit)}>
                 <div className={styles.row}>
+                    <Controller
+                        control={control}
+                        name="reviewID"
+                        render={({ field }) => <TextField {...field} type="hidden" />}
+                        defaultValue={review?._id}
+                    />
+                    <Controller
+                        control={control}
+                        name="postID"
+                        render={({ field }) => <TextField {...field} type="hidden" />}
+                        defaultValue={review?.post}
+                    />
                     <Controller
                         control={control}
                         name="text"
@@ -76,26 +78,26 @@ export function FormAddReview({ onSubmit }) {
                                 rows={4}
                             />
                         )}
-                        defaultValue=""
+                        defaultValue={text}
                     />
                 </div>
-                {isMoviePosts &&
-                    <div className={styles.row}>
-                        <Controller
-                            name="rating"
-                            control={control}
-                            rules={{ required: true }}
-                            render={({ field }) => (
-                                <Rating
-                                    {...propsReviewRating}
-                                    {...field}
-                                    max={10}
-                                />
-                            )}
-                            defaultValue={6}
-                        />
-                    </div>
-                }
+
+                <div className={styles.row}>
+                    <Controller
+                        name="rating"
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field }) => (
+                            <Rating
+                                {...propsReviewRating}
+                                {...field}
+                                max={10}
+
+                            />
+                        )}
+                        defaultValue={rating}
+                    />
+                </div>
 
                 <div className={styles.row}>
                     <FormButton type="submit">Отправить</FormButton>

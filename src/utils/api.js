@@ -105,11 +105,18 @@ class Api {
 
 
 
-    addReview(postID, postData) {
+    addReview(postID, reviewData) {
         return fetch(this.#getApiUrl(`/posts/comments/${postID}`), {
             headers: this.#headers,
             method: 'POST',
-            body: JSON.stringify(postData),
+            body: JSON.stringify(reviewData),
+        }).then(this.#onResponse);
+    }
+
+    deleteReviewById(postID, reviewID) {
+        return fetch(this.#getApiUrl(`/posts/comments/${postID}/${reviewID}`), {
+            headers: this.#headers,
+            method: 'DELETE',
         }).then(this.#onResponse);
     }
 

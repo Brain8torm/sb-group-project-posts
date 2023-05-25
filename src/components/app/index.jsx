@@ -14,7 +14,7 @@ import { UserContext } from '../../contexts/current-user-context';
 import { PostsContext } from '../../contexts/posts-context';
 import { NotifyContext } from '../../contexts/notify-context';
 import B8Notify from '../notify';
-import { FormAddPost, FormChangeAvatar } from '../forms';
+import { FormAddPost, FormChangeAvatar, FormEditReview } from '../forms';
 import { B8Modal } from '../modal';
 import { Login } from '../login';
 import { Register } from '../register';
@@ -32,6 +32,7 @@ import 'dayjs/locale/ru';
 import { FavoritesPage } from '../../pages/favorites';
 import { ReviewsPage } from '../../pages/reviews';
 import { MoviesPage } from '../../pages/movies';
+import { EditReviewPage } from '../../pages/edit-review';
 
 export function App() {
     const [posts, setPosts] = useState([]);
@@ -100,6 +101,16 @@ export function App() {
             });
             setNotifyStatus({ status: 'error', msg: 'Пост удален' });
             setPosts(newPosts);
+        });
+    }
+
+    function handleReviewDelete(review, post) {
+        api.deleteReviewById(review, post).then((deletedReview) => {
+            const newReviews = reviews?.filter((reviewState) => {
+                return reviewState._id === deletedReview._id;
+            });
+            setNotifyStatus({ status: 'error', msg: 'Отзыв удален' });
+            setReviews(newReviews);
         });
     }
 
@@ -284,6 +295,13 @@ export function App() {
         });
     };
 
+    const cbSubmitFormEditReview = (dataForm) => {
+        /*let ratingData = dataForm?.rating ? `|Рейтинг:${dataForm.rating}` : '';
+        dataForm.text = dataForm.text + ratingData;
+        delete dataForm.rating;*/
+        // TODO: нет API редактирования отзыва
+    };
+
     const cbSubmitFormChangeAvatar = (dataForm) => {
         api.changeUserAvatar(dataForm).then((userData) => {
             setCurrentUser(userData);
@@ -414,6 +432,7 @@ export function App() {
                     onPostDelete: handlePostDelete,
                     onPostsSwitch: handlePostsSwitch,
                     onPostPublic: handlePostPublish,
+                    onReviewDelete: handleReviewDelete,
                 }}
             >
                 <ActionsContext.Provider value={{ setQuickActions }}>
@@ -475,6 +494,12 @@ export function App() {
                                     path="/add-review"
                                     element={
                                         <AddReviewPage handleFormSubmit={cbSubmitFormAddReview} />
+                                    }
+                                />
+                                <Route
+                                    path="/edit-review/:reviewID"
+                                    element={
+                                        <EditReviewPage handleFormSubmit={cbSubmitFormEditReview} />
                                     }
                                 />
                                 <Route
@@ -575,8 +600,16 @@ export function App() {
                                     }
                                 />
                                 <Route
+                                    path="/edit-review/:reviewID"
+                                    element={
+                                        <B8Modal isOpen onClose={onCloseRoutingModal}>
+                                            <FormEditReview onSubmit={cbSubmitFormEditReview} />
+                                        </B8Modal>
+                                    }
+                                />
+                                <Route
                                     path="/reset-password"
-                                    element={<B8Modal isOpen>123</B8Modal>}
+                                    element={<B8Modal isOpen>reset</B8Modal>}
                                 />
                                 <Route
                                     path="/change-avatar"
