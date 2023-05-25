@@ -46,7 +46,7 @@ export function Header({ isLoading }) {
 
     return (
         <>
-            <AppBar position="static">
+            <AppBar position="sticky">
                 <Container maxWidth="lg">
                     <Toolbar disableGutters>
                         {isLoading ? (
