@@ -6,9 +6,9 @@
 }
 .title {
     background-color: #fff;
-    color: #1976D2;
+    color: #1976d2;
     padding: 10px;
-    display:inline-block;
+    display: inline-block;
     width: fit-content;
     border-radius: 10px;
 }
@@ -45,12 +45,12 @@
 
 @media (max-width: 600px) {
     .overlay {
-        clip-path: polygon(100% 0, 70% 50%, 100% 100%, 0 100%, 0 0);
+        clip-path: polygon(100% 0, 75% 50%, 100% 100%, 0 100%, 0 0);
         padding: 0 25px;
         width: 60%;
     }
     .title {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         margin: 0;
     }
     .lead {
