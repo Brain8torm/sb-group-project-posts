@@ -10,8 +10,6 @@ import { useLocation } from 'react-router-dom';
 export function PostsList({ type }) {
     const { posts, setPosts } = useContext(PostsContext);
 
-    
-
     const PER_PAGE = 12;
     const [page, setPage] = useState(1);
 

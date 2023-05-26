@@ -5,7 +5,7 @@ import api from '../../utils/api';
 import { Header } from '../header';
 import { Footer } from '../footer';
 import { HomePage } from '../../pages/home';
-import { isLiked } from '../../utils/posts';
+import { isLiked, isMoviePosts } from '../../utils/posts';
 import { SinglePostPage } from '../../pages/post';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { NotFoundPage } from '../../pages/not-found';
@@ -33,6 +33,7 @@ import { FavoritesPage } from '../../pages/favorites';
 import { ReviewsPage } from '../../pages/reviews';
 import { MoviesPage } from '../../pages/movies';
 import { EditReviewPage } from '../../pages/edit-review';
+import { useDebounce } from '../../hooks/useDebounce';
 
 export function App() {
     const [posts, setPosts] = useState([]);
@@ -47,6 +48,8 @@ export function App() {
     const [updatedPost, setUpdatedPost] = useState(null);
     const [currentSort, setCurrentSort] = useState('');
     const [currentFilter, setCurrentFilter] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const debounceSearchQuery = useDebounce(searchQuery, 300);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -82,6 +85,7 @@ export function App() {
         let newPosts = null;
         const oldPosts = allPosts;
 
+        /* TODO: Использовать isMoviePosts /src/utils/posts.js */
         if (type === 'my') {
             newPosts = posts.filter((post) => {
                 if (post?.author._id === currentUser?._id) {
@@ -176,6 +180,21 @@ export function App() {
         });
         setPosts(myPosts);
     }, [allPosts]);
+
+    useEffect(() => {
+        handleSearchRequest();
+    }, [debounceSearchQuery]);
+
+    function handleSearchRequest() {
+        //const beforeSearchPosts = posts;
+        //if (searchQuery) {
+            api.search(debounceSearchQuery).then((dataSearch) => {
+                setPosts(isMoviePosts(dataSearch));
+            });
+        //} else {
+            //setPosts(beforeSearchPosts);
+        //}
+    }
 
     const cbSubmitFormAddPost = (dataForm) => {
         let movieData = [];
@@ -423,10 +442,12 @@ export function App() {
                     currentFilter,
                     favoritePosts,
                     reviews,
+                    searchQuery,
                     setPosts,
                     setAllPosts,
                     setCurrentSort,
                     setCurrentFilter,
+                    setSearchQuery,
                     onSortedData: sortedData,
                     onPostLike: handlePostLike,
                     onPostDelete: handlePostDelete,
