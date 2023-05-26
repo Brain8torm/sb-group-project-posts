@@ -54,7 +54,7 @@ export function Header() {
                 <Container maxWidth="lg">
                     <Toolbar disableGutters>
                         {isLoading ? (
-                            <Skeleton sx={{ height: 36 }} animation="wave" variant="rectangular" />
+                            <Skeleton  width={155} height={50} animation="wave" sx={{mr: 2}} variant="rectangular" />
                         ) : (
                             <B8Logo altText="movieDb" link="./" />
                         )}

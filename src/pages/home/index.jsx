@@ -7,6 +7,7 @@ import {
     ListItem,
     ListItemAvatar,
     ListItemText,
+    Skeleton,
     Typography,
 } from '@mui/material';
 import { useContext, useEffect } from 'react';
@@ -27,6 +28,7 @@ import EmojiEventsOutlinedIcon from '@mui/icons-material/EmojiEventsOutlined';
 
 export function HomePage() {
     const { setQuickActions } = useContext(ActionsContext);
+    const { isLoading } = useContext(PostsContext);
     const location = useLocation();
 
     const { posts, reviews } = useContext(PostsContext);
@@ -64,7 +66,12 @@ export function HomePage() {
     return (
         <>
             <Container maxWidth="lg">
-                <Hero />
+                {isLoading ? (
+                    <Skeleton height="400px" width="100%" animation="wave" variant="rectangular" />
+                ) : (
+                    <Hero />
+                )}
+
                 <div className={styles.section}>
                     <B8PostsCarousel data={posts} title="Новые фильмы" />
                 </div>
