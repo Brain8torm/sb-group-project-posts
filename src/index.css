@@ -31,6 +31,23 @@ code {
 }
 
 .slick-slide {
-	padding: 0 8px;
-	box-sizing: border-box;
- }
+    padding: 0 8px;
+    box-sizing: border-box;
+}
+
+.slick-track {
+    display: flex !important;
+}
+
+.slick-slide {
+    height: inherit !important;
+}
+
+.slick-list {
+    padding: 15px 0px;
+}
+
+.posts-carousel .slick-slide,
+.posts-carousel .slick-slide > div {
+    height: 100%;
+}

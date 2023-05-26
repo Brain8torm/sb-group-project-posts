@@ -2,6 +2,7 @@ import Slider from 'react-slick';
 import { PostCard } from '../post-card';
 
 import styles from './carousel.module.css';
+import classNames from 'classnames';
 
 export function B8PostsCarousel({ data, carouselSettings, title }) {
     let defaultSettings = {
@@ -41,7 +42,7 @@ export function B8PostsCarousel({ data, carouselSettings, title }) {
     Object.assign(defaultSettings, carouselSettings);
 
     return (
-        <div className={styles.wrapper}>
+        <div className={classNames('posts-carousel', styles.wrapper)}>
             <div className={styles.title_box}>
                 {title?.length && <h3 className={styles.title}>{title}</h3>}
             </div>
