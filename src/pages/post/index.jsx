@@ -60,7 +60,7 @@ export function SinglePostPage({ updatedPost, handlePostDelete }) {
         <>
             {!errorState && (
                 <Container maxWidth="lg">
-                    {post?.author._id === currentUser?._id ? (
+                    {/*post?.author._id !== currentUser?._id ? (*/
                         <Post
                             {...post}
                             postComments={postComments}
@@ -68,14 +68,14 @@ export function SinglePostPage({ updatedPost, handlePostDelete }) {
                             onPostLike={handlePostLike}
                             onPostRemove={handlePostRemove}
                         />
-                    ) : (
+                    /*) : (
                         <PostAlt
                             {...post}
                             postComments={postComments}
                             currentUser={currentUser}
                             onPostLike={handlePostLike}
                         />
-                    )}
+                    )*/}
                 </Container>
             )}
         </>
