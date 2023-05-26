@@ -39,20 +39,22 @@ export const movieYears = (movies) => {
 };
 
 export const movieAllGenres = (movies) => {
+
     let genres = [];
-    movies.forEach((movie, index) => {
-        genres.push(movieGenres(movie.text)[0]);
+    movies?.forEach((movie, index) => {
+        const genre = movieGenres(movie?.text)[0];
+        if (genre) genres.push(genre);
     });
 
     return [...new Set(genres)].sort((a, b) => a.localeCompare(b));
 };
 
-
 export const movieTop = (movies, number = 10) => {
-    return [...movies]?.sort((a, b) => {
-        const ratingA = movieRatingKP(a?.text);
-        const ratingB = movieRatingKP(b?.text);
-        return ratingA < ratingB ? 1 : ratingB < ratingA ? -1 : 0;
-    }).slice(0, 10);
-}
-
+    return [...movies]
+        ?.sort((a, b) => {
+            const ratingA = movieRatingKP(a?.text);
+            const ratingB = movieRatingKP(b?.text);
+            return ratingA < ratingB ? 1 : ratingB < ratingA ? -1 : 0;
+        })
+        .slice(0, number);
+};

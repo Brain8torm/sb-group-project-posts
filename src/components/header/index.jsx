@@ -14,14 +14,14 @@ import styles from './header.module.css';
 import { B8Logo } from '../logo';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
-import { PostsContext } from '../../contexts/posts-context'
+import { PostsContext } from '../../contexts/posts-context';
 import { UserContext } from '../../contexts/current-user-context';
-import { Skeleton } from '@mui/material';
+import { Skeleton, TextField } from '@mui/material';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
 export function Header() {
-
     const { isLoading } = useContext(PostsContext);
-    
+
     const settings = ['Профиль', 'Выход'];
 
     const { currentUser } = useContext(UserContext);
