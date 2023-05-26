@@ -304,7 +304,9 @@ export function App() {
         let ratingData = dataForm?.rating ? `|Рейтинг:${dataForm.rating}` : '';
         dataForm.text = dataForm.text + ratingData;
         delete dataForm.rating;
-
+        /*
+        TODO: не появляется коммент после добавления
+        */
         api.addReview(currentPost?._id, dataForm).then((ReviewedPost) => {
             setNotifyStatus({ status: 'success', msg: 'Отзыв добавлен' });
             setUpdatedPost(ReviewedPost);
