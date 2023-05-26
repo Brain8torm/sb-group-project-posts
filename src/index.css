@@ -30,24 +30,27 @@ code {
     color: initial;
 }
 
-.slick-slide {
-    padding: 0 8px;
-    box-sizing: border-box;
-}
 
-.slick-track {
+
+.posts-carousel .slick-track {
     display: flex !important;
 }
 
-.slick-slide {
+.posts-carousel .slick-slide {
     height: inherit !important;
+    margin: 0 10px;
 }
 
-.slick-list {
-    padding: 15px 0px;
+.posts-carousel .slick-list {
+    margin: 0 -10px;
+    padding: 10px 0px;
 }
 
 .posts-carousel .slick-slide,
 .posts-carousel .slick-slide > div {
     height: 100%;
+}
+
+.reviews-carousel .slick-list {
+    padding: 10px 0;
 }

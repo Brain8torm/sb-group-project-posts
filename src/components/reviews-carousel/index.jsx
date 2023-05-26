@@ -3,6 +3,7 @@ import Slider from 'react-slick';
 
 import styles from './carousel.module.css';
 import { ReviewCard } from '../review-card';
+import classNames from 'classnames';
 
 export function B8ReviewsCarousel({ data, carouselSettings, title }) {
     let defaultSettings = {
@@ -42,7 +43,7 @@ export function B8ReviewsCarousel({ data, carouselSettings, title }) {
     Object.assign(defaultSettings, carouselSettings);
 
     return (
-        <div className={styles.wrapper}>
+        <div className={classNames('reviews-carousel', styles.wrapper)}>
             <div className={styles.title_box}>
                 {title?.length && <h3 className={styles.title}>{title}</h3>}
             </div>
