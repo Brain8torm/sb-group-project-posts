@@ -30,7 +30,9 @@ code {
     color: initial;
 }
 
-
+.slick-slider, .slick-list {
+    position: static;
+}
 
 .posts-carousel .slick-track {
     display: flex !important;
@@ -54,3 +56,40 @@ code {
 .reviews-carousel .slick-list {
     padding: 10px 0;
 }
+
+.slick-next {
+    bottom: 0;
+    right: 0;
+    position: absolute !important;
+}
+.slick-prev {
+    bottom: 0;
+    position: absolute !important;
+}
+
+.posts-carousel .slick-prev:before,
+.posts-carousel .slick-next:before,
+.reviews-carousel .slick-prev:before,
+.reviews-carousel .slick-next:before {
+    font-family: 'initial';
+    content: '';
+    font-size: auto;
+    line-height: auto;
+    opacity: 1;
+    color: white;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/*.posts-carousel .slick-next {
+
+    top: 10px;
+    right: 0;
+
+}
+.posts-carousel .slick-prev {
+
+    top: 10px;
+    right: 0;
+
+}*/
