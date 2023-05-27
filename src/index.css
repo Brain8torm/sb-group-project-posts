@@ -93,3 +93,7 @@ code {
     right: 0;
 
 }*/
+
+.MuiMenu-list a {
+    text-decoration: none;
+}
