@@ -186,14 +186,9 @@ export function App() {
     }, [debounceSearchQuery]);
 
     function handleSearchRequest() {
-        //const beforeSearchPosts = posts;
-        //if (searchQuery) {
-            api.search(debounceSearchQuery).then((dataSearch) => {
-                setPosts(isMoviePosts(dataSearch));
-            });
-        //} else {
-            //setPosts(beforeSearchPosts);
-        //}
+        api.search(debounceSearchQuery).then((dataSearch) => {
+            setPosts(isMoviePosts(dataSearch));
+        });
     }
 
     const cbSubmitFormAddPost = (dataForm) => {
@@ -387,26 +382,25 @@ export function App() {
     };
 
     function sortedData(currentSort) {
-        let sorted;
 
         if (currentSort === 'По названию') {
             setPosts(posts?.sort((a, b) => (a.title > b.title ? 1 : b.title > a.title ? -1 : 0)));
         }
 
         if (currentSort === 'По лайкам') {
-            posts?.sort((a, b) =>
+            setPosts(posts?.sort((a, b) =>
                 a.likes.length < b.likes.length ? 1 : b.likes.length < a.likes.length ? -1 : 0
-            );
+            ));
         }
 
         if (currentSort === 'По отзывам') {
-            posts?.sort((a, b) =>
+            setPosts(posts?.sort((a, b) =>
                 a.comments.length < b.comments.length
                     ? 1
                     : b.comments.length < a.comments.length
                     ? -1
                     : 0
-            );
+            ));
         }
 
         if (currentSort === 'По году выпуска') {
@@ -420,17 +414,17 @@ export function App() {
 
         // TODO: переписать с учетом методов в ./src/utils/movies.js
         if (currentSort === 'По рейтингу') {
-            posts?.sort((a, b) => {
+            setPosts(posts?.sort((a, b) => {
                 const yearA = a?.text.split('|')[5].split(':')[1];
                 const yearB = b?.text.split('|')[5].split(':')[1];
                 return yearA < yearB ? 1 : yearB < yearA ? -1 : 0;
-            });
+            }));
         }
 
         if (currentSort === '') {
-            posts?.sort((a, b) =>
+            setPosts(posts?.sort((a, b) =>
                 b.created_at > a.created_at ? 1 : a.created_at > b.created_at ? -1 : 0
-            );
+            ));
         }
     }
 

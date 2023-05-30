@@ -16,8 +16,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { PostsContext } from '../../contexts/posts-context';
 import { UserContext } from '../../contexts/current-user-context';
-import { Skeleton, TextField } from '@mui/material';
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import { Skeleton } from '@mui/material';
+
 
 export function Header() {
     const { isLoading } = useContext(PostsContext);
@@ -54,7 +54,13 @@ export function Header() {
                 <Container maxWidth="lg">
                     <Toolbar disableGutters>
                         {isLoading ? (
-                            <Skeleton  width={155} height={50} animation="wave" sx={{mr: 2}} variant="rectangular" />
+                            <Skeleton
+                                width={155}
+                                height={50}
+                                animation="wave"
+                                sx={{ mr: 2 }}
+                                variant="rectangular"
+                            />
                         ) : (
                             <B8Logo altText="movieDb" link="./" />
                         )}
