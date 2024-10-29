@@ -10,7 +10,11 @@ import { genres } from '../../utils/config';
 
 export function FormAddPost({ onSubmit }) {
 
-    const { control, handleSubmit, formState: { errors } } = useForm({ mode: "onBlur" });
+    const {
+        control,
+        handleSubmit,
+        formState: { errors }
+    } = useForm({ mode: "onBlur" });
 
     const [isMoviePosts, setIsMoviePosts] = useState(true);
 

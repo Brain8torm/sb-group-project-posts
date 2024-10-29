@@ -5,7 +5,7 @@ import api from '../../utils/api';
 import { Header } from '../header';
 import { Footer } from '../footer';
 import { HomePage } from '../../pages/home';
-import { isLiked } from '../../utils/posts';
+import { isLiked, isMoviePosts } from '../../utils/posts';
 import { SinglePostPage } from '../../pages/post';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { NotFoundPage } from '../../pages/not-found';
@@ -14,7 +14,7 @@ import { UserContext } from '../../contexts/current-user-context';
 import { PostsContext } from '../../contexts/posts-context';
 import { NotifyContext } from '../../contexts/notify-context';
 import B8Notify from '../notify';
-import { FormAddPost, FormChangeAvatar } from '../forms';
+import { FormAddPost, FormChangeAvatar, FormEditReview } from '../forms';
 import { B8Modal } from '../modal';
 import { Login } from '../login';
 import { Register } from '../register';
@@ -32,6 +32,8 @@ import 'dayjs/locale/ru';
 import { FavoritesPage } from '../../pages/favorites';
 import { ReviewsPage } from '../../pages/reviews';
 import { MoviesPage } from '../../pages/movies';
+import { EditReviewPage } from '../../pages/edit-review';
+import { useDebounce } from '../../hooks/useDebounce';
 
 export function App() {
     const [posts, setPosts] = useState([]);
@@ -46,6 +48,8 @@ export function App() {
     const [updatedPost, setUpdatedPost] = useState(null);
     const [currentSort, setCurrentSort] = useState('');
     const [currentFilter, setCurrentFilter] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const debounceSearchQuery = useDebounce(searchQuery, 300);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -81,6 +85,7 @@ export function App() {
         let newPosts = null;
         const oldPosts = allPosts;
 
+        /* TODO: Использовать isMoviePosts /src/utils/posts.js */
         if (type === 'my') {
             newPosts = posts.filter((post) => {
                 if (post?.author._id === currentUser?._id) {
@@ -100,6 +105,16 @@ export function App() {
             });
             setNotifyStatus({ status: 'error', msg: 'Пост удален' });
             setPosts(newPosts);
+        });
+    }
+
+    function handleReviewDelete(review, post) {
+        api.deleteReviewById(review, post).then((deletedReview) => {
+            const newReviews = reviews?.filter((reviewState) => {
+                return reviewState._id === deletedReview._id;
+            });
+            setNotifyStatus({ status: 'error', msg: 'Отзыв удален' });
+            setReviews(newReviews);
         });
     }
 
@@ -165,6 +180,16 @@ export function App() {
         });
         setPosts(myPosts);
     }, [allPosts]);
+
+    useEffect(() => {
+        handleSearchRequest();
+    }, [debounceSearchQuery]);
+
+    function handleSearchRequest() {
+        api.search(debounceSearchQuery).then((dataSearch) => {
+            setPosts(isMoviePosts(dataSearch));
+        });
+    }
 
     const cbSubmitFormAddPost = (dataForm) => {
         let movieData = [];
@@ -274,7 +299,9 @@ export function App() {
         let ratingData = dataForm?.rating ? `|Рейтинг:${dataForm.rating}` : '';
         dataForm.text = dataForm.text + ratingData;
         delete dataForm.rating;
-
+        /*
+        TODO: не появляется коммент после добавления
+        */
         api.addReview(currentPost?._id, dataForm).then((ReviewedPost) => {
             setNotifyStatus({ status: 'success', msg: 'Отзыв добавлен' });
             setUpdatedPost(ReviewedPost);
@@ -282,6 +309,13 @@ export function App() {
                 navigate(initialPath || '/', { replace: true });
             }, 500);
         });
+    };
+
+    const cbSubmitFormEditReview = (dataForm) => {
+        /*let ratingData = dataForm?.rating ? `|Рейтинг:${dataForm.rating}` : '';
+        dataForm.text = dataForm.text + ratingData;
+        delete dataForm.rating;*/
+        // TODO: нет API редактирования отзыва
     };
 
     const cbSubmitFormChangeAvatar = (dataForm) => {
@@ -348,26 +382,25 @@ export function App() {
     };
 
     function sortedData(currentSort) {
-        let sorted;
 
         if (currentSort === 'По названию') {
             setPosts(posts?.sort((a, b) => (a.title > b.title ? 1 : b.title > a.title ? -1 : 0)));
         }
 
         if (currentSort === 'По лайкам') {
-            posts?.sort((a, b) =>
+            setPosts(posts?.sort((a, b) =>
                 a.likes.length < b.likes.length ? 1 : b.likes.length < a.likes.length ? -1 : 0
-            );
+            ));
         }
 
         if (currentSort === 'По отзывам') {
-            posts?.sort((a, b) =>
+            setPosts(posts?.sort((a, b) =>
                 a.comments.length < b.comments.length
                     ? 1
                     : b.comments.length < a.comments.length
                     ? -1
                     : 0
-            );
+            ));
         }
 
         if (currentSort === 'По году выпуска') {
@@ -381,17 +414,17 @@ export function App() {
 
         // TODO: переписать с учетом методов в ./src/utils/movies.js
         if (currentSort === 'По рейтингу') {
-            posts?.sort((a, b) => {
+            setPosts(posts?.sort((a, b) => {
                 const yearA = a?.text.split('|')[5].split(':')[1];
                 const yearB = b?.text.split('|')[5].split(':')[1];
                 return yearA < yearB ? 1 : yearB < yearA ? -1 : 0;
-            });
+            }));
         }
 
         if (currentSort === '') {
-            posts?.sort((a, b) =>
+            setPosts(posts?.sort((a, b) =>
                 b.created_at > a.created_at ? 1 : a.created_at > b.created_at ? -1 : 0
-            );
+            ));
         }
     }
 
@@ -405,15 +438,18 @@ export function App() {
                     currentFilter,
                     favoritePosts,
                     reviews,
+                    searchQuery,
                     setPosts,
                     setAllPosts,
                     setCurrentSort,
                     setCurrentFilter,
+                    setSearchQuery,
                     onSortedData: sortedData,
                     onPostLike: handlePostLike,
                     onPostDelete: handlePostDelete,
                     onPostsSwitch: handlePostsSwitch,
                     onPostPublic: handlePostPublish,
+                    onReviewDelete: handleReviewDelete,
                 }}
             >
                 <ActionsContext.Provider value={{ setQuickActions }}>
@@ -475,6 +511,12 @@ export function App() {
                                     path="/add-review"
                                     element={
                                         <AddReviewPage handleFormSubmit={cbSubmitFormAddReview} />
+                                    }
+                                />
+                                <Route
+                                    path="/edit-review/:reviewID"
+                                    element={
+                                        <EditReviewPage handleFormSubmit={cbSubmitFormEditReview} />
                                     }
                                 />
                                 <Route
@@ -575,8 +617,16 @@ export function App() {
                                     }
                                 />
                                 <Route
+                                    path="/edit-review/:reviewID"
+                                    element={
+                                        <B8Modal isOpen onClose={onCloseRoutingModal}>
+                                            <FormEditReview onSubmit={cbSubmitFormEditReview} />
+                                        </B8Modal>
+                                    }
+                                />
+                                <Route
                                     path="/reset-password"
-                                    element={<B8Modal isOpen>123</B8Modal>}
+                                    element={<B8Modal isOpen>reset</B8Modal>}
                                 />
                                 <Route
                                     path="/change-avatar"

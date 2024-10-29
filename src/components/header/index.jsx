@@ -14,10 +14,14 @@ import styles from './header.module.css';
 import { B8Logo } from '../logo';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
+import { PostsContext } from '../../contexts/posts-context';
 import { UserContext } from '../../contexts/current-user-context';
 import { Skeleton } from '@mui/material';
 
-export function Header({ isLoading }) {
+
+export function Header() {
+    const { isLoading } = useContext(PostsContext);
+
     const settings = ['Профиль', 'Выход'];
 
     const { currentUser } = useContext(UserContext);
@@ -46,11 +50,17 @@ export function Header({ isLoading }) {
 
     return (
         <>
-            <AppBar position="static">
+            <AppBar position="sticky">
                 <Container maxWidth="lg">
-                    <Toolbar>
+                    <Toolbar disableGutters>
                         {isLoading ? (
-                            <Skeleton sx={{ height: 36 }} animation="wave" variant="rectangular" />
+                            <Skeleton
+                                width={155}
+                                height={50}
+                                animation="wave"
+                                sx={{ mr: 2 }}
+                                variant="rectangular"
+                            />
                         ) : (
                             <B8Logo altText="movieDb" link="./" />
                         )}
